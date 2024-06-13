@@ -1,0 +1,19 @@
+Landing:
+Dados brutos armazenados sem alterações.
+
+Bronze:
+Conversão de formato para Delta Lake.
+Adição de metadados se necessário.
+Correção de tipos de dados.
+
+Silver:
+Limpeza de dados (remoção de duplicatas, tratamento de nulos).
+Renomeação de colunas.
+Integração e junção de tabelas relacionais.
+Padronização e consistência de dados.
+
+Gold:
+Agregações e cálculos.
+Filtragem de dados irrelevantes.
+Criação de tabelas específicas para relatórios e dashboards.
+Otimizações para consultas de alto desempenho.
