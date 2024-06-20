@@ -60,11 +60,9 @@ Adicione notas adicionais sobre como implantar isso em um sistema ativo
 
 ## Ferramentas utilizadas
 
-Mencione as ferramentas que você usou para criar seu projeto
-
-- Ferramenta 1 + link - Breve descrição
-- Ferramenta 2 + link - Breve descrição
-- Ferramenta 3 + link - Breve descrição
+- **[Azure](https://portal.azure.com/)** - é a plataforma de computação em nuvem da Microsoft que oferece uma ampla gama de serviços, incluindo computação, armazenamento, bancos de dados, redes e inteligência artificial, para desenvolver, gerenciar e hospedar aplicativos e serviços de maneira escalável e segura.
+- **[Power BI](https://www.microsoft.com/pt-br/power-platform/products/power-bi)** - é uma ferramenta de business intelligence da Microsoft que permite a visualização interativa de dados e a criação de relatórios e dashboards dinâmicos, ajudando as empresas a transformar dados brutos em insights acionáveis de forma fácil e intuitiva.
+- **[MongoDB](https://www.mongodb.com/)** - é um banco de dados NoSQL orientado a documentos que armazena dados em formato JSON-like, conhecido por sua flexibilidade, escalabilidade e facilidade de uso, sendo amplamente utilizado para aplicações modernas que exigem alta performance e gerenciamento eficiente de grandes volumes de dados não estruturados.
 
 ## Colaboração
 
