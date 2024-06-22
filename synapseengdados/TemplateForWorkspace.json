@@ -1362,6 +1362,168 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/bronze')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "7da3f108-02c5-4392-9123-bf3ee759f1de"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Products**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Renomear as colunas"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products/part-00000-c4f0d2c6-cb17-4d2d-aa78-e84d707dff01-c000.snappy.parquet', format='parquet')\r\n",
+							"\r\n",
+							"colunas_renomeadas = {\r\n",
+							"    '$oid': 'ID',\r\n",
+							"    'productId': 'ID_PRODUTO',\r\n",
+							"    'name': 'NOME',\r\n",
+							"    'description': 'DESCRICAO',\r\n",
+							"    'costPrice_$numberDouble': 'PRECO_CUSTO',\r\n",
+							"    'sellingPrice_$numberDouble': 'PRECO_VENDA',\r\n",
+							"    '$numberInt': 'QUANTIDADE'\r\n",
+							"}\r\n",
+							"\r\n",
+							"for old_name, new_name in colunas_renomeadas.items():\r\n",
+							"    df = df.withColumnRenamed(old_name, new_name)\r\n",
+							"\r\n",
+							"display(df.limit(1))"
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Customers**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Renomear as colunas"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/customers/part-00000-2e55211d-3906-4d6f-86f5-ea31f33ebb5c-c000.snappy.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/landing-zone')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -1383,16 +1545,172 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e28e8aca-c648-488e-a14b-936150d0cc29"
+						"spark.autotune.trackingId": "32bc1953-a2db-41a2-8416-0289dca4e08d"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "python"
+					"synapse_widget": {
+						"version": "0.1",
+						"state": {
+							"81c9f8e5-d530-455a-9048-d543ca289444": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "666d9c3ce8d66686ded04df5",
+												"1": "4fd0e050-ac10-4210-8215-133fa5b26e98",
+												"2": "themselves",
+												"3": "Risk including investment that. Morning continue option show. Note management machine all finally.",
+												"4": "286.02999999999997",
+												"5": "414.18000000000001",
+												"6": "20"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04df6",
+												"1": "494b2a6f-b240-4b6b-bde8-996c254772f8",
+												"2": "edge",
+												"3": "Late how movie always. Ball risk kitchen difference close.Onto night fish popular force stock. Around exactly politics likely change design more. They plan your fill firm.",
+												"4": "328.41000000000003",
+												"5": "482.19",
+												"6": "52"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04df7",
+												"1": "21ea5311-f4fa-4f32-9627-a72996561c1b",
+												"2": "near",
+												"3": "Color important over southern raise end there. Pay perhaps tonight gun happy shake. Something meeting ask computer them.",
+												"4": "105.42",
+												"5": "132.56",
+												"6": "5"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04df8",
+												"1": "7516c240-fc47-4e8a-8af0-a182854727db",
+												"2": "executive",
+												"3": "Future rather audience artist.Environment better help he way you while. Central worker already month.",
+												"4": "389.27999999999997",
+												"5": "593.44000000000005",
+												"6": "91"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04df9",
+												"1": "a6e97206-4b86-430e-88b8-b12eaae6d09d",
+												"2": "prove",
+												"3": "Think everyone believe never news response road. Plant anything seem save.Pressure time learn left me power. Nation under resource fund rise reason.",
+												"4": "144.19999999999999",
+												"5": "286.72000000000003",
+												"6": "50"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04dfa",
+												"1": "a900227c-4e98-443f-b47f-f6e95ba981da",
+												"2": "goal",
+												"3": "Beautiful respond crime could professional soon up. Improve growth health. Side letter Democrat citizen glass south wear.Wrong country goal great. News institution themselves back grow.",
+												"4": "271.10000000000002",
+												"5": "384.94",
+												"6": "1"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04dfb",
+												"1": "3cdde27e-f37f-4bf5-a939-0095777ffaad",
+												"2": "significant",
+												"3": "Run then theory weight. Cause everyone religious watch cold.Scene enter economy business which. Wish another think create have skill.",
+												"4": "41.539999999999999",
+												"5": "76.090000000000003",
+												"6": "85"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04dfc",
+												"1": "2e39f837-fde6-4b19-b9cd-61245bbe5e60",
+												"2": "stop",
+												"3": "Involve per inside work. Its media choice certainly type true nature letter. Trouble voice test newspaper structure senior.",
+												"4": "474.54000000000002",
+												"5": "841.61000000000001",
+												"6": "36"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04dfd",
+												"1": "c9f72f41-bb32-497d-bb43-450f3eea72d1",
+												"2": "population",
+												"3": "Race then show hospital artist six strong.Control grow because and prepare. Authority specific television value interview anything life and. Of politics ok stage participant political deep.",
+												"4": "385.41000000000003",
+												"5": "615.47000000000003",
+												"6": "60"
+											},
+											{
+												"0": "666d9c3ce8d66686ded04dfe",
+												"1": "fc7794ac-79a9-44b3-a65a-dbf765040a13",
+												"2": "understand",
+												"3": "Money fill main determine area time. Have decide east study and close.Statement hard possible assume result. Someone music life beyond amount focus society project.",
+												"4": "350.97000000000003",
+												"5": "561.58000000000004",
+												"6": "92"
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "$oid",
+												"type": "string"
+											},
+											{
+												"key": "1",
+												"name": "productId",
+												"type": "string"
+											},
+											{
+												"key": "2",
+												"name": "name",
+												"type": "string"
+											},
+											{
+												"key": "3",
+												"name": "description",
+												"type": "string"
+											},
+											{
+												"key": "4",
+												"name": "costPrice_$numberDouble",
+												"type": "string"
+											},
+											{
+												"key": "5",
+												"name": "sellingPrice_$numberDouble",
+												"type": "string"
+											},
+											{
+												"key": "6",
+												"name": "$numberInt",
+												"type": "string"
+											}
+										],
+										"truncated": false
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "count",
+											"categoryFieldKeys": [
+												"0"
+											],
+											"seriesFieldKeys": [
+												"0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							}
+						}
 					},
+					"enableDebugMode": false,
 					"language_info": {
 						"name": "python"
 					},
@@ -1403,13 +1721,14 @@
 						"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
 						"auth": {
 							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
+							"authResource": "https://dev.azuresynapse.net",
+							"authHeader": null
 						},
 						"sparkVersion": "3.4",
 						"nodeCount": 10,
 						"cores": 4,
 						"memory": 28,
-						"automaticScaleJobs": false
+						"extraHeader": null
 					},
 					"sessionKeepAliveTimeout": 30
 				},
