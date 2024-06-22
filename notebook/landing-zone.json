@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7a73a50f-1e1c-4f02-abeb-d1ef8a855ca9"
+				"spark.autotune.trackingId": "48b03601-df44-46f5-84d1-48eff9df5105"
 			}
 		},
 		"metadata": {
@@ -130,7 +130,7 @@
 				"source": [
 					"%%pyspark\r\n",
 					"bronze_products = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/products'\r\n",
-					"df_products.write.format(\"delta\").mode(\"overwrite\").save(bronze_products)"
+					"df_products.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_products)"
 				],
 				"execution_count": 2
 			},
