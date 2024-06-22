@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7cc0819e-5a79-4cc7-8eab-c41de054dcf5"
+				"spark.autotune.trackingId": "3626e66d-722c-4ac6-95bc-a4a41a857dc2"
 			}
 		},
 		"metadata": {
@@ -84,7 +84,7 @@
 				},
 				"source": [
 					"%%pyspark\r\n",
-					"df = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products/part-00000-c4f0d2c6-cb17-4d2d-aa78-e84d707dff01-c000.snappy.parquet', format='parquet')\r\n",
+					"df_products = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products/part-00000-c4f0d2c6-cb17-4d2d-aa78-e84d707dff01-c000.snappy.parquet', format='parquet')\r\n",
 					"\r\n",
 					"colunas_renomeadas = {\r\n",
 					"    '$oid': 'ID',\r\n",
@@ -97,11 +97,9 @@
 					"}\r\n",
 					"\r\n",
 					"for old_name, new_name in colunas_renomeadas.items():\r\n",
-					"    df = df.withColumnRenamed(old_name, new_name)\r\n",
-					"\r\n",
-					"display(df.limit(1))"
+					"    df_products = df_products.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 4
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -148,7 +146,9 @@
 				},
 				"source": [
 					"%%pyspark\r\n",
-					"df = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/customers/part-00000-2e55211d-3906-4d6f-86f5-ea31f33ebb5c-c000.snappy.parquet', format='parquet')"
+					"df_customers = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/customers/part-00000-2e55211d-3906-4d6f-86f5-ea31f33ebb5c-c000.snappy.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_customers.show(10)"
 				],
 				"execution_count": null
 			}
