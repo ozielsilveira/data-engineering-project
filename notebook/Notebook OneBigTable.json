@@ -1,0 +1,110 @@
+{
+	"name": "Notebook OneBigTable",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPool01",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "264fe0a3-e11a-4b75-b3ed-7a65ff977f69"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+				"name": "SparkPool01",
+				"type": "Spark",
+				"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"\r\n",
+					"# Carregar os dados de cada coleção\r\n",
+					"orders_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orders.parquet', format='parquet')\r\n",
+					"products_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/products.parquet', format='parquet')\r\n",
+					"orders_items_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/ordersitems.parquet', format='parquet')\r\n",
+					"employees_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/employees.parquet', format='parquet')\r\n",
+					"departments_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departments.parquet', format='parquet')\r\n",
+					"customers_df = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/customers.parquet', format='parquet')\r\n",
+					"\r\n",
+					"# Realizar as junções necessárias\r\n",
+					"# Join Orders com Customers\r\n",
+					"orders_customers_df = orders_df.join(customers_df, orders_df.customerId == customers_df.customerId, \"left\").drop(customers_df.customerId)\r\n",
+					"\r\n",
+					"# Join OrdersItems com Orders e Products\r\n",
+					"orders_items_orders_df = orders_items_df.join(orders_df, orders_items_df.orderId == orders_df.orderId, \"left\").drop(orders_df.orderId)\r\n",
+					"orders_items_orders_products_df = orders_items_orders_df.join(products_df, orders_items_orders_df.productId == products_df.productId, \"left\").drop(products_df.productId)\r\n",
+					"\r\n",
+					"# Join Employees com Departments\r\n",
+					"employees_departments_df = employees_df.join(departments_df, employees_df.departmentId == departments_df.departmentId, \"left\").drop(departments_df.departmentId)\r\n",
+					"\r\n",
+					"# Combinar todas as tabelas em uma única tabela\r\n",
+					"from pyspark.sql.functions import lit\r\n",
+					"\r\n",
+					"# Adicionar um identificador de tipo para cada DataFrame\r\n",
+					"orders_customers_df = orders_customers_df.withColumn(\"type\", lit(\"order_customer\"))\r\n",
+					"orders_items_orders_products_df = orders_items_orders_products_df.withColumn(\"type\", lit(\"order_item\"))\r\n",
+					"employees_departments_df = employees_departments_df.withColumn(\"type\", lit(\"employee\"))\r\n",
+					"\r\n",
+					"# Selecionar colunas comuns para união\r\n",
+					"orders_customers_common_df = orders_customers_df.select(\"type\", \"orderId\", \"customerId\", \"createdAt\", \"total\", \"name\", \"address\", \"email\")\r\n",
+					"orders_items_orders_products_common_df = orders_items_orders_products_df.select(\"type\", \"itemId\", \"orderId\", \"productId\", \"productName\", \"quantity\", \"unitPrice\", \"totalPrice\")\r\n",
+					"employees_departments_common_df = employees_departments_df.select(\"type\", \"employeeId\", \"name\", \"position\", \"createdAt\", \"salary\", \"departmentId\", \"location\")\r\n",
+					"\r\n",
+					"# Realizar a união\r\n",
+					"final_df = orders_customers_common_df.unionByName(orders_items_orders_products_common_df, allowMissingColumns=True)\r\n",
+					"final_df = final_df.unionByName(employees_departments_common_df, allowMissingColumns=True)\r\n",
+					"\r\n",
+					"# Salvar o resultado em um arquivo Parquet\r\n",
+					"output_path = 'abfss://landing-zone@datalakeengdados.dfs.core.windows.net/OneBigTable.parquet'\r\n",
+					"final_df.write.mode('overwrite').parquet(output_path)\r\n",
+					"\r\n",
+					"# Exibir uma amostra do resultado final\r\n",
+					"display(final_df.limit(10))\r\n",
+					""
+				],
+				"execution_count": 1
+			}
+		]
+	}
+}
