@@ -1,0 +1,65 @@
+{
+	"name": "Teste",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DATASET_JSON",
+						"type": "DatasetReference",
+						"parameters": {
+							"cw_fileName": "teste"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_3ww",
+						"type": "DatasetReference",
+						"parameters": {
+							"cw_fileName": "teste"
+						}
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-06-16T18:10:08Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

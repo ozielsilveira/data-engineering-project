@@ -1,0 +1,2171 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Nome do Workspace",
+			"defaultValue": "synapseengdados"
+		},
+		"MongoDbAtlas1_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'MongoDbAtlas1'"
+		},
+		"synapseengdados-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'synapseengdados-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:synapseengdados.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"MongoDbAtlas1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "end_dados"
+		},
+		"synapseengdados-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakeengdados.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_3ww')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_3ww",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy_3ww",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{item().source.collection}"
+										},
+										{
+											"name": "Destination",
+											"value": "landing-zone//@{item().destination.fileName}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "MongoDbAtlasSource",
+											"batchSize": 100
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"validateDataConsistency": false,
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_3ww",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_collection": "@item().source.collection"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_3ww",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_fileName": "@item().destination.fileName"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"collection": "customers"
+								},
+								"destination": {
+									"fileName": "customers.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['customerId']"
+												},
+												"sink": {
+													"name": "customerId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['address']"
+												},
+												"sink": {
+													"name": "address"
+												}
+											},
+											{
+												"source": {
+													"path": "$['email']"
+												},
+												"sink": {
+													"name": "email"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "departments"
+								},
+								"destination": {
+									"fileName": "departments.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['departmentId']"
+												},
+												"sink": {
+													"name": "departmentId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['location']"
+												},
+												"sink": {
+													"name": "location"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "employees"
+								},
+								"destination": {
+									"fileName": "employees.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['employeeId']"
+												},
+												"sink": {
+													"name": "employeeId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['position']"
+												},
+												"sink": {
+													"name": "position"
+												}
+											},
+											{
+												"source": {
+													"path": "$['createdAt']"
+												},
+												"sink": {
+													"name": "createdAt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['salary']['$numberDouble']"
+												},
+												"sink": {
+													"name": "$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['departmentId']"
+												},
+												"sink": {
+													"name": "departmentId"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "orderItems"
+								},
+								"destination": {
+									"fileName": "orderItems.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['itemId']"
+												},
+												"sink": {
+													"name": "itemId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['orderId']"
+												},
+												"sink": {
+													"name": "orderId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productId']"
+												},
+												"sink": {
+													"name": "productId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productName']"
+												},
+												"sink": {
+													"name": "productName"
+												}
+											},
+											{
+												"source": {
+													"path": "$['quantity']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['unitPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "unitPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['totalPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "totalPrice_$numberDouble"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "orders"
+								},
+								"destination": {
+									"fileName": "orders.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['orderId']"
+												},
+												"sink": {
+													"name": "orderId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['customerId']"
+												},
+												"sink": {
+													"name": "customerId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['createdAt']"
+												},
+												"sink": {
+													"name": "createdAt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['total']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "products"
+								},
+								"destination": {
+									"fileName": "products.parquet"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productId']"
+												},
+												"sink": {
+													"name": "productId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['description']"
+												},
+												"sink": {
+													"name": "description"
+												}
+											},
+											{
+												"source": {
+													"path": "$['costPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "costPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['sellingPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "sellingPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['stockQuantity']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											}
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-06-16T16:09:05Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_3ww')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_3ww')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_9fn')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_9fn",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy_9fn",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{item().source.collection}"
+										},
+										{
+											"name": "Destination",
+											"value": "landing-zone//@{item().destination.fileName}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "MongoDbAtlasSource",
+											"batchSize": 100
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"validateDataConsistency": false,
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_9fn",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_collection": "@item().source.collection"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_9fn",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_fileName": "@item().destination.fileName"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"collection": "customers"
+								},
+								"destination": {
+									"fileName": "customers"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['customerId']"
+												},
+												"sink": {
+													"name": "customerId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['address']"
+												},
+												"sink": {
+													"name": "address"
+												}
+											},
+											{
+												"source": {
+													"path": "$['email']"
+												},
+												"sink": {
+													"name": "email"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "departments"
+								},
+								"destination": {
+									"fileName": "departments"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['departmentId']"
+												},
+												"sink": {
+													"name": "departmentId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['location']"
+												},
+												"sink": {
+													"name": "location"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "employees"
+								},
+								"destination": {
+									"fileName": "employees"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['employeeId']"
+												},
+												"sink": {
+													"name": "employeeId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['position']"
+												},
+												"sink": {
+													"name": "position"
+												}
+											},
+											{
+												"source": {
+													"path": "$['createdAt']"
+												},
+												"sink": {
+													"name": "createdAt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['salary']['$numberDouble']"
+												},
+												"sink": {
+													"name": "$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['departmentId']"
+												},
+												"sink": {
+													"name": "departmentId"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "orderItems"
+								},
+								"destination": {
+									"fileName": "orderItems"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['itemId']"
+												},
+												"sink": {
+													"name": "itemId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['orderId']"
+												},
+												"sink": {
+													"name": "orderId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productId']"
+												},
+												"sink": {
+													"name": "productId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productName']"
+												},
+												"sink": {
+													"name": "productName"
+												}
+											},
+											{
+												"source": {
+													"path": "$['quantity']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['unitPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "unitPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['totalPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "totalPrice_$numberDouble"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "orders"
+								},
+								"destination": {
+									"fileName": "orders"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['orderId']"
+												},
+												"sink": {
+													"name": "orderId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['customerId']"
+												},
+												"sink": {
+													"name": "customerId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['createdAt']"
+												},
+												"sink": {
+													"name": "createdAt"
+												}
+											},
+											{
+												"source": {
+													"path": "$['total']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"collection": "products"
+								},
+								"destination": {
+									"fileName": "products"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['_id']['$oid']"
+												},
+												"sink": {
+													"name": "$oid"
+												}
+											},
+											{
+												"source": {
+													"path": "$['productId']"
+												},
+												"sink": {
+													"name": "productId"
+												}
+											},
+											{
+												"source": {
+													"path": "$['name']"
+												},
+												"sink": {
+													"name": "name"
+												}
+											},
+											{
+												"source": {
+													"path": "$['description']"
+												},
+												"sink": {
+													"name": "description"
+												}
+											},
+											{
+												"source": {
+													"path": "$['costPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "costPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['sellingPrice']['$numberDouble']"
+												},
+												"sink": {
+													"name": "sellingPrice_$numberDouble"
+												}
+											},
+											{
+												"source": {
+													"path": "$['stockQuantity']['$numberInt']"
+												},
+												"sink": {
+													"name": "$numberInt"
+												}
+											}
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-06-15T14:13:56Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_9fn')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_9fn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Teste')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DATASET_JSON",
+								"type": "DatasetReference",
+								"parameters": {
+									"cw_fileName": "teste"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_3ww",
+								"type": "DatasetReference",
+								"parameters": {
+									"cw_fileName": "teste"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-06-16T18:10:08Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DATASET_JSON')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_3ww')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DATASET_JSON')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "synapseengdados-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_fileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().cw_fileName",
+							"type": "Expression"
+						},
+						"fileSystem": "landing-zone"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/synapseengdados-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_3ww')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "synapseengdados-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_fileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().cw_fileName",
+							"type": "Expression"
+						},
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/synapseengdados-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_9fn')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "synapseengdados-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_fileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().cw_fileName",
+							"type": "Expression"
+						},
+						"fileSystem": "landing-zone"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/synapseengdados-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_3ww')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDbAtlas1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_collection": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "MongoDbAtlasCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": {
+						"value": "@dataset().cw_collection",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/MongoDbAtlas1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_9fn')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MongoDbAtlas1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_collection": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "MongoDbAtlasCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": {
+						"value": "@dataset().cw_collection",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/MongoDbAtlas1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/MongoDbAtlas1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "MongoDbAtlas",
+				"typeProperties": {
+					"connectionString": "[parameters('MongoDbAtlas1_connectionString')]",
+					"database": "[parameters('MongoDbAtlas1_properties_typeProperties_database')]",
+					"driverVersion": "v2"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapseengdados-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('synapseengdados-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapseengdados-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('synapseengdados-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/IntegrationRuntime1')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "Brazil South",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						},
+						"pipelineExternalComputeScaleProperties": {
+							"timeToLive": 60,
+							"numberOfPipelineNodes": 1,
+							"numberOfExternalNodes": 1
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/IntegrationRuntime2')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/bronze')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "3626e66d-722c-4ac6-95bc-a4a41a857dc2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Products**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Renomear as colunas"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_products = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products/part-00000-c4f0d2c6-cb17-4d2d-aa78-e84d707dff01-c000.snappy.parquet', format='parquet')\r\n",
+							"\r\n",
+							"colunas_renomeadas = {\r\n",
+							"    '$oid': 'ID',\r\n",
+							"    'productId': 'ID_PRODUTO',\r\n",
+							"    'name': 'NOME',\r\n",
+							"    'description': 'DESCRICAO',\r\n",
+							"    'costPrice_$numberDouble': 'PRECO_CUSTO',\r\n",
+							"    'sellingPrice_$numberDouble': 'PRECO_VENDA',\r\n",
+							"    '$numberInt': 'QUANTIDADE'\r\n",
+							"}\r\n",
+							"\r\n",
+							"for old_name, new_name in colunas_renomeadas.items():\r\n",
+							"    df_products = df_products.withColumnRenamed(old_name, new_name)"
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Customers**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Renomear as colunas"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_customers = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/customers/part-00000-2e55211d-3906-4d6f-86f5-ea31f33ebb5c-c000.snappy.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_customers.show(10)"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/landing-zone')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"runAsWorkspaceSystemIdentity": false,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "7ecc4262-c5de-42c4-94d7-47460a21007b"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela Products**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_products = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/products.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_products = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/products'\r\n",
+							"df_products.write.format(\"delta\").mode(\"overwrite\").save(bronze_products)"
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela Customers**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_customers = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/customers.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_customers = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/customers'\r\n",
+							"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_customers)"
+						],
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela Departments**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_departments = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departments.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 8
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_departments = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/departments'\r\n",
+							"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_departments)"
+						],
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela Employees**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_employees = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/employees.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 10
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_employees = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/employees'\r\n",
+							"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_employees)"
+						],
+						"outputs": [],
+						"execution_count": 11
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela OrderItems**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_orderItems = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orderItems.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_orderItems = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/orderItems'\r\n",
+							"df_orderItems.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_orderItems)"
+						],
+						"outputs": [],
+						"execution_count": 13
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Tabela Orders**"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Leitura do arquivo Parquet armazenado no ADLS."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_orders = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orders.parquet', format='parquet')"
+						],
+						"outputs": [],
+						"execution_count": 14
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"bronze_orders = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/orders'\r\n",
+							"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_orders)"
+						],
+						"outputs": [],
+						"execution_count": 15
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool01')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 3,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "brazilsouth"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-custstgacct--synapseengdados-datalakeengdados')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Storage/storageAccounts/datalakeengdados",
+				"groupId": "dfs",
+				"fqdns": [
+					"datalakeengdados.dfs.core.windows.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-sql--synapseengdados')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados",
+				"groupId": "sql",
+				"fqdns": [
+					"synapseengdados.5079418f-c743-412e-96a5-6b6db4a3b40a.sql.azuresynapse.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/default/synapse-ws-sqlOnDemand--synapseengdados')]",
+			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"privateLinkResourceId": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados",
+				"groupId": "sqlOnDemand",
+				"fqdns": [
+					"synapseengdados-ondemand.5079418f-c743-412e-96a5-6b6db4a3b40a.sql.azuresynapse.net"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
+			]
+		}
+	]
+}

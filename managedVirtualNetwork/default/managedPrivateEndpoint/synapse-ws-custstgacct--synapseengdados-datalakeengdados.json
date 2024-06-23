@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-custstgacct--synapseengdados-datalakeengdados",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Storage/storageAccounts/datalakeengdados",
+		"groupId": "dfs",
+		"fqdns": [
+			"datalakeengdados.dfs.core.windows.net"
+		]
+	}
+}

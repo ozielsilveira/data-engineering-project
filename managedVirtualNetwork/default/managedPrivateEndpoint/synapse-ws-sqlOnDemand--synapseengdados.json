@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-sqlOnDemand--synapseengdados",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados",
+		"groupId": "sqlOnDemand",
+		"fqdns": [
+			"synapseengdados-ondemand.5079418f-c743-412e-96a5-6b6db4a3b40a.sql.azuresynapse.net"
+		]
+	}
+}
