@@ -1,0 +1,25 @@
+KPIs com Filtro de Tempo
+
+Valor Gasto com Pagamento de Salários para os Funcionários
+Descrição: Total de despesas com salários pagos aos funcionários em um período específico (mensal ou anual).
+Fórmula: Soma dos salários dos funcionários no período selecionado.
+Exemplo de Filtro: Salários pagos em junho de 2024.
+
+Faturamento
+Descrição: Total de receita gerada pela venda de produtos e serviços em um período específico.
+Fórmula: Soma dos valores totais de todos os pedidos (totalPrice em OrdersItems) no período selecionado.
+Exemplo de Filtro: Receita total de junho de 2024.
+
+Lucro
+Descrição: Diferença entre a receita gerada e os custos envolvidos (incluindo custo dos produtos vendidos e outras despesas) em um período específico.
+Fórmula: Faturamento - (Custo dos Produtos Vendidos + Despesas Operacionais) no período selecionado.
+Exemplo de Filtro: Lucro de junho de 2024.
+
+Valor Médio de Compra por Cliente
+Descrição: Valor médio gasto por cada cliente em um período específico.
+Fórmula: Faturamento / Número de clientes que fizeram compras no período selecionado.
+Exemplo de Filtro: Valor médio de compra por cliente em junho de 2024.
+
+Métricas 
+1 - Total de clientes novos por período.
+2 - Taxa de retenção de clientes por período.
