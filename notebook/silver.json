@@ -1,0 +1,854 @@
+{
+	"name": "silver",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPool01",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "c586c35b-f5cb-4884-8ea1-ad179bd01c89"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+				"name": "SparkPool01",
+				"type": "Spark",
+				"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## **Gerando um dataframe dos delta lake no container bronze do Azure Data Lake Storage.**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"df_products = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/products\")\r\n",
+					"df_customers = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/customers\")\r\n",
+					"df_departments = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/departments\")\r\n",
+					"df_orderItems = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/orderItems\")\r\n",
+					"df_orders = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/orders\")\r\n",
+					"df_employees = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
+					""
+				],
+				"execution_count": 24
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from pyspark.sql.functions import current_timestamp, lit\r\n",
+					"\r\n",
+					"df_products = df_products.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_products = df_products.withColumn(\"nome_arquivo\", lit(\"products\"))\r\n",
+					"\r\n",
+					"df_customers = df_customers.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_customers = df_customers.withColumn(\"nome_arquivo\", lit(\"customers\"))\r\n",
+					"\r\n",
+					"df_departments = df_departments.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_departments = df_departments.withColumn(\"nome_arquivo\", lit(\"departments\"))\r\n",
+					"\r\n",
+					"df_orderItems = df_orderItems.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_orderItems = df_orderItems.withColumn(\"nome_arquivo\", lit(\"orderItems\"))\r\n",
+					"\r\n",
+					"df_orders = df_orders.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_orders = df_orders.withColumn(\"nome_arquivo\", lit(\"orders\"))\r\n",
+					"\r\n",
+					"df_employees = df_employees.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_employees = df_employees.withColumn(\"nome_arquivo\", lit(\"employees\"))"
+				],
+				"execution_count": 25
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## **Mudando as colunas para maiúscula e ajustanto os nomes das colunas de acordo com o dicionário de dados.**"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Products**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_products = df_products.columns\r\n",
+					"print(colunas_products)\r\n",
+					""
+				],
+				"execution_count": 26
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_products = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'productId': 'CODIGO_PRODUTO',\r\n",
+					"    'name': 'NOME',\r\n",
+					"    'description': 'DESCRICAO',\r\n",
+					"    'costPrice_$numberDouble': 'PRECO_CUSTO',\r\n",
+					"    'sellingPrice_$numberDouble': 'PRECO_VENDA',\r\n",
+					"    '$numberInt': 'QUANTIDADE',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_products.items():\r\n",
+					"    df_products = df_products.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 27
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_products.limit(1))"
+				],
+				"execution_count": 28
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_products = 'abfss://silver@datalakeengdados.dfs.core.windows.net/products'\r\n",
+					"\r\n",
+					"df_products.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_products)"
+				],
+				"execution_count": 29
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Customers**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_customers = df_customers.columns\r\n",
+					"print(colunas_customers)"
+				],
+				"execution_count": 30
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_customers = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'customerId': 'CODIGO_CLIENTE',\r\n",
+					"    'name': 'NOME',\r\n",
+					"    'address': 'ENDERECO',\r\n",
+					"    'email': 'EMAIL',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_customers.items():\r\n",
+					"    df_customers = df_customers.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 31
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_customers.limit(1))"
+				],
+				"execution_count": 32
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_customers = 'abfss://silver@datalakeengdados.dfs.core.windows.net/customers'\r\n",
+					"\r\n",
+					"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_customers)"
+				],
+				"execution_count": 33
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Employees**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_employees = df_employees.columns\r\n",
+					"print(colunas_employees)"
+				],
+				"execution_count": 34
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_employees = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'employeeId': 'CODIGO_FUNCIONARIO',\r\n",
+					"    'name': 'NOME',\r\n",
+					"    'position': 'CARGO',\r\n",
+					"    'createdAt': 'CADASTRADO',\r\n",
+					"    '$numberDouble': 'SALARIO',\r\n",
+					"    'departmentId': 'DEPARTAMENTO',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_employees.items():\r\n",
+					"    df_employees = df_employees.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 35
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_employees.limit(1))"
+				],
+				"execution_count": 36
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_employees = 'abfss://silver@datalakeengdados.dfs.core.windows.net/employees'\r\n",
+					"\r\n",
+					"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_employees)"
+				],
+				"execution_count": 37
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Departments**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_departments = df_departments.columns\r\n",
+					"print(colunas_departments)"
+				],
+				"execution_count": 38
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_departments = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'departmentId': 'CODIGO_DEPARTAMENTO',\r\n",
+					"    'name': 'NOME',\r\n",
+					"    'location': 'LOCALIZACAO',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_departments.items():\r\n",
+					"    df_departments = df_departments.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 39
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_departments.limit(1))"
+				],
+				"execution_count": 40
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_departments = 'abfss://silver@datalakeengdados.dfs.core.windows.net/departments'\r\n",
+					"\r\n",
+					"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departments)"
+				],
+				"execution_count": 41
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **OrderItems**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_orderItems = df_orderItems.columns\r\n",
+					"print(colunas_orderItems)"
+				],
+				"execution_count": 42
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_orderItems = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'itemId': 'CODIGO_ITEM',\r\n",
+					"    'orderId': 'CODIGO_PEDIDO',\r\n",
+					"    'productId': 'CODIGO_PRODUTO',\r\n",
+					"    'productName': 'NOME_DO_PRODUTO',\r\n",
+					"    '$numberInt': 'QUANTIDADE',\r\n",
+					"    'unitPrice_$numberDoublE': 'PRECO_UNITARIO',\r\n",
+					"    'totalPrice_$numberDouble': 'PRECO_TOTAL',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_orderItems.items():\r\n",
+					"    df_orderItems = df_orderItems.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 43
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_orderItems.limit(1))"
+				],
+				"execution_count": 44
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_orderItems = 'abfss://silver@datalakeengdados.dfs.core.windows.net/orderItems'\r\n",
+					"\r\n",
+					"df_orderItems.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orderItems)"
+				],
+				"execution_count": 45
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Orders**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_orders = df_orders.columns\r\n",
+					"print(colunas_orders)"
+				],
+				"execution_count": 46
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_orders = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'orderId': 'CODIGO_PEDIDO',\r\n",
+					"    'customerId': 'CODIGO_CLIENTE',\r\n",
+					"    'createdAt': 'CRIADO',\r\n",
+					"    '$numberInt': 'QUANTIDADE',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_orders.items():\r\n",
+					"    df_orders = df_orders.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 47
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_orderItems.limit(1))"
+				],
+				"execution_count": 48
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_orders = 'abfss://silver@datalakeengdados.dfs.core.windows.net/orders'\r\n",
+					"\r\n",
+					"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orders)"
+				],
+				"execution_count": 49
+			}
+		]
+	}
+}
