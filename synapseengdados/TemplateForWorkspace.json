@@ -1378,173 +1378,12 @@
 					"executorMemory": "28g",
 					"executorCores": 4,
 					"numExecutors": 2,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3626e66d-722c-4ac6-95bc-a4a41a857dc2"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "Synapse PySpark"
-					},
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
-						"name": "SparkPool01",
-						"type": "Spark",
-						"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
-						},
-						"sparkVersion": "3.4",
-						"nodeCount": 10,
-						"cores": 4,
-						"memory": 28
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## **Products**"
-						]
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"##### Renomear as colunas"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"microsoft": {
-								"language": "python"
-							},
-							"collapsed": false
-						},
-						"source": [
-							"%%pyspark\r\n",
-							"df_products = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products/part-00000-c4f0d2c6-cb17-4d2d-aa78-e84d707dff01-c000.snappy.parquet', format='parquet')\r\n",
-							"\r\n",
-							"colunas_renomeadas = {\r\n",
-							"    '$oid': 'ID',\r\n",
-							"    'productId': 'ID_PRODUTO',\r\n",
-							"    'name': 'NOME',\r\n",
-							"    'description': 'DESCRICAO',\r\n",
-							"    'costPrice_$numberDouble': 'PRECO_CUSTO',\r\n",
-							"    'sellingPrice_$numberDouble': 'PRECO_VENDA',\r\n",
-							"    '$numberInt': 'QUANTIDADE'\r\n",
-							"}\r\n",
-							"\r\n",
-							"for old_name, new_name in colunas_renomeadas.items():\r\n",
-							"    df_products = df_products.withColumnRenamed(old_name, new_name)"
-						],
-						"outputs": [],
-						"execution_count": 2
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## **Customers**"
-						]
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"##### Renomear as colunas"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"microsoft": {
-								"language": "python"
-							},
-							"collapsed": false
-						},
-						"source": [
-							"%%pyspark\r\n",
-							"df_customers = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/customers/part-00000-2e55211d-3906-4d6f-86f5-ea31f33ebb5c-c000.snappy.parquet', format='parquet')\r\n",
-							"\r\n",
-							"df_customers.show(10)"
-						],
-						"outputs": [],
-						"execution_count": null
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/landing-zone')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "SparkPool01",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
 					"runAsWorkspaceSystemIdentity": false,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "7ecc4262-c5de-42c4-94d7-47460a21007b"
+						"spark.autotune.trackingId": "4410b09f-94f7-4391-9ece-1ced685739b5"
 					}
 				},
 				"metadata": {
@@ -1585,7 +1424,49 @@
 							}
 						},
 						"source": [
-							"## **Tabela Products**"
+							"## **Mostrando todos os arquivos da camada landing-zone**"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"landing_zone_path = \"abfss://landing-zone@datalakeengdados.dfs.core.windows.net/\"\r\n",
+							"\r\n",
+							"df = spark.read.format(\"binaryFile\").load(landing_zone_path)\r\n",
+							"\r\n",
+							"file_paths = df.select(\"path\").collect()\r\n",
+							"for file in file_paths:\r\n",
+							"    print(file[\"path\"])"
+						],
+						"outputs": [],
+						"execution_count": 41
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Products**"
 						]
 					},
 					{
@@ -1598,7 +1479,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -1620,10 +1501,12 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_products = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/products.parquet', format='parquet')"
+							"df_products = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/products.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_products.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": 42
 					},
 					{
 						"cell_type": "markdown",
@@ -1635,7 +1518,52 @@
 							}
 						},
 						"source": [
-							"##### Salvando na camada bronze com o formato delta"
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_products = df_products.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_products = df_products.withColumn(\"nome_arquivo\", lit(\"products.parquet\"))\r\n",
+							"\r\n",
+							"df_products.printSchema()\r\n",
+							"\r\n",
+							"df_products.show(10)\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 43
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta."
 						]
 					},
 					{
@@ -1657,10 +1585,11 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_products = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/products'\r\n",
-							"df_products.write.format(\"delta\").mode(\"overwrite\").save(bronze_products)"
+							"\r\n",
+							"df_products.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_products)"
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 44
 					},
 					{
 						"cell_type": "markdown",
@@ -1672,7 +1601,7 @@
 							}
 						},
 						"source": [
-							"## **Tabela Customers**"
+							"## **Customers**"
 						]
 					},
 					{
@@ -1685,7 +1614,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -1706,10 +1635,56 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_customers = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/customers.parquet', format='parquet')"
+							"df_customers = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/customers.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_customers.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_customers = df_customers.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_customers = df_customers.withColumn(\"nome_arquivo\", lit(\"customers.parquet\"))\r\n",
+							"\r\n",
+							"df_customers.printSchema()\r\n",
+							"\r\n",
+							"df_customers.show(10)"
+						],
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1743,10 +1718,11 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_customers = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/customers'\r\n",
+							"\r\n",
 							"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_customers)"
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1758,7 +1734,7 @@
 							}
 						},
 						"source": [
-							"## **Tabela Departments**"
+							"## **Departments**"
 						]
 					},
 					{
@@ -1771,7 +1747,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -1792,10 +1768,56 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_departments = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departments.parquet', format='parquet')"
+							"df_departments = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departments.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_departments.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 8
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_departments = df_departments.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_departments = df_departments.withColumn(\"nome_arquivo\", lit(\"departments.parquet\"))\r\n",
+							"\r\n",
+							"df_departments.printSchema()\r\n",
+							"\r\n",
+							"df_departments.show(10)"
+						],
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1829,10 +1851,11 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_departments = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/departments'\r\n",
+							"\r\n",
 							"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_departments)"
 						],
 						"outputs": [],
-						"execution_count": 9
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1844,7 +1867,7 @@
 							}
 						},
 						"source": [
-							"## **Tabela Employees**"
+							"## **Employees**"
 						]
 					},
 					{
@@ -1857,7 +1880,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -1879,10 +1902,12 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_employees = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/employees.parquet', format='parquet')"
+							"df_employees = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/employees.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_employees.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 10
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1894,7 +1919,51 @@
 							}
 						},
 						"source": [
-							"##### Salvando na camada bronze com o formato delta"
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_employees = df_employees.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_employees = df_employees.withColumn(\"nome_arquivo\", lit(\"employees.parquet\"))\r\n",
+							"\r\n",
+							"df_employees.printSchema()\r\n",
+							"\r\n",
+							"df_employees.show(10)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Salvando na camada bronze com o formato delta."
 						]
 					},
 					{
@@ -1916,10 +1985,11 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_employees = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/employees'\r\n",
+							"\r\n",
 							"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_employees)"
 						],
 						"outputs": [],
-						"execution_count": 11
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -1931,7 +2001,7 @@
 							}
 						},
 						"source": [
-							"## **Tabela OrderItems**"
+							"## **OrderItems**"
 						]
 					},
 					{
@@ -1944,7 +2014,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -1965,10 +2035,56 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_orderItems = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orderItems.parquet', format='parquet')"
+							"df_orderItems = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orderItems.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_orderItems.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_orderItems = df_orderItems.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_orderItems = df_orderItems.withColumn(\"nome_arquivo\", lit(\"orderItems.parquet\"))\r\n",
+							"\r\n",
+							"df_orderItems.printSchema()\r\n",
+							"\r\n",
+							"df_orderItems.show(10)"
+						],
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -2002,10 +2118,11 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_orderItems = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/orderItems'\r\n",
+							"\r\n",
 							"df_orderItems.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_orderItems)"
 						],
 						"outputs": [],
-						"execution_count": 13
+						"execution_count": 21
 					},
 					{
 						"cell_type": "markdown",
@@ -2017,7 +2134,7 @@
 							}
 						},
 						"source": [
-							"## **Tabela Orders**"
+							"## **Orders**"
 						]
 					},
 					{
@@ -2030,7 +2147,7 @@
 							}
 						},
 						"source": [
-							"##### Leitura do arquivo Parquet armazenado no ADLS."
+							"##### Gerando um dataframe."
 						]
 					},
 					{
@@ -2051,10 +2168,56 @@
 						},
 						"source": [
 							"%%pyspark\r\n",
-							"df_orders = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orders.parquet', format='parquet')"
+							"df_orders = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orders.parquet', format='parquet')\r\n",
+							"\r\n",
+							"df_orders.printSchema()"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": 22
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"from pyspark.sql.functions import current_timestamp, lit\r\n",
+							"\r\n",
+							"df_orders = df_orders.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
+							"\r\n",
+							"df_orders = df_orders.withColumn(\"nome_arquivo\", lit(\"orders.parquet\"))\r\n",
+							"\r\n",
+							"df_orders.printSchema()\r\n",
+							"\r\n",
+							"df_orders.show(10)"
+						],
+						"outputs": [],
+						"execution_count": 23
 					},
 					{
 						"cell_type": "markdown",
@@ -2088,10 +2251,50 @@
 						"source": [
 							"%%pyspark\r\n",
 							"bronze_orders = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/orders'\r\n",
+							"\r\n",
 							"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_orders)"
 						],
 						"outputs": [],
-						"execution_count": 15
+						"execution_count": 24
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## **Lendo um exemplo de um delta lake para validar a existencia dos dados e das colunas do metadados**"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df_products = spark.read.load('abfss://bronze@datalakeengdados.dfs.core.windows.net/products', format='delta')\r\n",
+							"\r\n",
+							"display(df_products.limit(2))"
+						],
+						"outputs": [],
+						"execution_count": 40
 					}
 				]
 			},
