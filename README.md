@@ -90,9 +90,9 @@ Fale sobre a versão e o controle de versões para o projeto. Para as versões d
 ## Collaborators
 
 - **Aluno 1** - _Criação do MongoDB e script de geração de dados_ - [Guilherme Santana](https://github.com/guirms)
-- **Aluno 2** - _Ingestão de dados_ - [Jean Carlos Nesi](https://github.com/JeanNesi)
+- **Aluno 2** - _Ingestão de dados e Orquestração_ - [Jean Carlos Nesi](https://github.com/JeanNesi)
 - **Aluno 3** - _Script Spark_ - [Bruna Savi](https://github.com/brsavii)
-- **Aluno 4** - _Orquestração_ - [Luigi Milanez](https://github.com/luigimilanez)
+- **Aluno 4** - _Configurar ambiente Data Lake_ - [Luigi Milanez](https://github.com/luigimilanez)
 - **Aluno 5** - _Métricas_ - [Lucas Borges Borba](https://github.com/lucasborba111)
 - **Aluno 6** - _Power BI_ - [Kauã Librelato](https://github.com/KauaLibrelato)
 - **Aluno 7** - _Documentação_ - [Oziel Silveira](https://github.com/ozielsilveira)
