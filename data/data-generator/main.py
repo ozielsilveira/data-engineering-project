@@ -20,19 +20,29 @@ def createCustomers(n):
 def createProducts(n):
     products = []
     for _ in range(n):
-        cost_price = round(random.uniform(5, 500), 2)  # Preço de custo
-        selling_price = round(cost_price * random.uniform(1.2, 2), 2)  # Preço de venda (20%-100% de margem de lucro)
         product = {
             "productId": str(fake.uuid4()),
             "name": fake.word(),
-            "description": fake.text(),
-            "costPrice": cost_price,
-            "sellingPrice": selling_price,
-            "stockQuantity": random.randint(0, 100)
+            "description": fake.text()
         }
         products.append(product)
     with open('products.json', 'w') as f:
         json.dump(products, f, indent=4)
+
+def createDepartmentProducts(n, department_ids, product_ids):
+    departmentProducts = []
+    for _ in range(n):
+        departmentProduct = {
+            "departmentProductId": str(fake.uuid4()),
+            "departmentId": random.choice(department_ids),
+            "productId": random.choice(product_ids),
+            "costPrice": round(random.uniform(5, 500), 2),
+            "sellingPrice": round(random.uniform(5, 500) * random.uniform(1.2, 2), 2),
+            "stockQuantity": random.randint(0, 100)
+        }
+        departmentProducts.append(departmentProduct)
+    with open('departmentProducts.json', 'w') as f:
+        json.dump(departmentProducts, f, indent=4)
 
 def createOrders(n, customer_ids):
     orders = []
@@ -41,24 +51,24 @@ def createOrders(n, customer_ids):
             "orderId": str(fake.uuid4()),
             "customerId": random.choice(customer_ids),
             "createdAt": fake.date_time_between(start_date="-3y", end_date="now").isoformat(),
-            "total": 0  # O total será calculado posteriormente
+            "total": 0 
         }
         orders.append(order)
     with open('orders.json', 'w') as f:
         json.dump(orders, f, indent=4)
 
-def createOrderItems(n, order_ids, product_data):
+def createOrderItems(n, order_ids, department_product_data):
     orderItems = []
     for _ in range(n):
-        product = random.choice(product_data)
+        department_product = random.choice(department_product_data)
         item = {
             "itemId": str(fake.uuid4()),
             "orderId": random.choice(order_ids),
-            "productId": product["productId"],
-            "productName": product["name"],
+            "productId": department_product["productId"],
+            "productName": "Product",  
             "quantity": random.randint(1, 10),
-            "unitPrice": product["sellingPrice"],  # Usando o preço de venda
-            "totalPrice": 0  # O total será calculado posteriormente
+            "unitPrice": department_product["sellingPrice"], 
+            "totalPrice": 0  
         }
         item["totalPrice"] = round(item["quantity"] * item["unitPrice"], 2)
         orderItems.append(item)
@@ -94,36 +104,42 @@ def createDepartments(n):
 
 def main():
     n = 10000
-    
+
     createCustomers(n)
-    
+
     with open('customers.json') as f:
         customers_data = json.load(f)
         customer_ids = [customer['customerId'] for customer in customers_data]
-    
+
     createDepartments(n)
-    
+
     with open('departments.json') as f:
         departments_data = json.load(f)
         department_ids = [department['departmentId'] for department in departments_data]
-    
+
     createProducts(n)
-    
+
     with open('products.json') as f:
         products_data = json.load(f)
-    
+        product_ids = [product['productId'] for product in products_data]
+
     createOrders(n, customer_ids)
-    
+
     with open('orders.json') as f:
         orders_data = json.load(f)
         order_ids = [order['orderId'] for order in orders_data]
-    
+
     createEmployees(n, department_ids)
-    
+
     with open('employees.json') as f:
         employees_data = json.load(f)
-    
-    createOrderItems(n, order_ids, products_data)
+
+    createDepartmentProducts(n, department_ids, product_ids)
+
+    with open('departmentProducts.json') as f:
+        department_product_data = json.load(f)
+
+    createOrderItems(n, order_ids, department_product_data)
 
 if __name__ == "__main__":
     main()
