@@ -1,0 +1,531 @@
+{
+	"name": "Pipeline de dados",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach_o6f",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy_o6f",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source.collection}"
+								},
+								{
+									"name": "Destination",
+									"value": "landing-zone//@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "MongoDbAtlasSource",
+									"batchSize": 100
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"validateDataConsistency": false,
+								"translator": {
+									"value": "@item().copyActivity.translator",
+									"type": "Expression"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset_o6f",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_collection": "@item().source.collection"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DestinationDataset_o6f",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_fileName": "@item().destination.fileName"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"collection": "customers"
+						},
+						"destination": {
+							"fileName": "customers.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['customerId']"
+										},
+										"sink": {
+											"name": "customerId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "$['address']"
+										},
+										"sink": {
+											"name": "address"
+										}
+									},
+									{
+										"source": {
+											"path": "$['email']"
+										},
+										"sink": {
+											"name": "email"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "departmentProducts"
+						},
+						"destination": {
+							"fileName": "departmentProducts.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['departmentProductId']"
+										},
+										"sink": {
+											"name": "departmentProductId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['departmentId']"
+										},
+										"sink": {
+											"name": "departmentId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['productId']"
+										},
+										"sink": {
+											"name": "productId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['costPrice']['$numberDouble']"
+										},
+										"sink": {
+											"name": "costPrice_$numberDouble"
+										}
+									},
+									{
+										"source": {
+											"path": "$['sellingPrice']['$numberDouble']"
+										},
+										"sink": {
+											"name": "sellingPrice_$numberDouble"
+										}
+									},
+									{
+										"source": {
+											"path": "$['stockQuantity']['$numberInt']"
+										},
+										"sink": {
+											"name": "$numberInt"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "departments"
+						},
+						"destination": {
+							"fileName": "departments.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['departmentId']"
+										},
+										"sink": {
+											"name": "departmentId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "$['location']"
+										},
+										"sink": {
+											"name": "location"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "employees"
+						},
+						"destination": {
+							"fileName": "employees.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['employeeId']"
+										},
+										"sink": {
+											"name": "employeeId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "$['position']"
+										},
+										"sink": {
+											"name": "position"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']"
+										},
+										"sink": {
+											"name": "createdAt"
+										}
+									},
+									{
+										"source": {
+											"path": "$['salary']['$numberDouble']"
+										},
+										"sink": {
+											"name": "$numberDouble"
+										}
+									},
+									{
+										"source": {
+											"path": "$['departmentId']"
+										},
+										"sink": {
+											"name": "departmentId"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "orderItems"
+						},
+						"destination": {
+							"fileName": "orderItems.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['itemId']"
+										},
+										"sink": {
+											"name": "itemId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['orderId']"
+										},
+										"sink": {
+											"name": "orderId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['productId']"
+										},
+										"sink": {
+											"name": "productId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['productName']"
+										},
+										"sink": {
+											"name": "productName"
+										}
+									},
+									{
+										"source": {
+											"path": "$['quantity']['$numberInt']"
+										},
+										"sink": {
+											"name": "quantity_$numberInt"
+										}
+									},
+									{
+										"source": {
+											"path": "$['unitPrice']['$numberDouble']"
+										},
+										"sink": {
+											"name": "unitPrice_$numberDouble"
+										}
+									},
+									{
+										"source": {
+											"path": "$['unitPrice']['$numberInt']"
+										},
+										"sink": {
+											"name": "unitPrice_$numberInt"
+										}
+									},
+									{
+										"source": {
+											"path": "$['totalPrice']['$numberDouble']"
+										},
+										"sink": {
+											"name": "totalPrice_$numberDouble"
+										}
+									},
+									{
+										"source": {
+											"path": "$['totalPrice']['$numberInt']"
+										},
+										"sink": {
+											"name": "totalPrice_$numberInt"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "orders"
+						},
+						"destination": {
+							"fileName": "orders.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['orderId']"
+										},
+										"sink": {
+											"name": "orderId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['customerId']"
+										},
+										"sink": {
+											"name": "customerId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['createdAt']"
+										},
+										"sink": {
+											"name": "createdAt"
+										}
+									},
+									{
+										"source": {
+											"path": "$['total']['$numberInt']"
+										},
+										"sink": {
+											"name": "$numberInt"
+										}
+									}
+								]
+							}
+						}
+					},
+					{
+						"source": {
+							"collection": "products"
+						},
+						"destination": {
+							"fileName": "products.parquet"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['_id']['$oid']"
+										},
+										"sink": {
+											"name": "$oid"
+										}
+									},
+									{
+										"source": {
+											"path": "$['productId']"
+										},
+										"sink": {
+											"name": "productId"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "$['description']"
+										},
+										"sink": {
+											"name": "description"
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			}
+		},
+		"annotations": []
+	}
+}
