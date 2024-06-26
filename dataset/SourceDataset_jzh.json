@@ -1,0 +1,23 @@
+{
+	"name": "SourceDataset_jzh",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MongoDbAtlas1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"cw_collection": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "MongoDbAtlasCollection",
+		"schema": [],
+		"typeProperties": {
+			"collection": {
+				"value": "@dataset().cw_collection",
+				"type": "Expression"
+			}
+		}
+	}
+}
