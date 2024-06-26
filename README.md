@@ -56,7 +56,25 @@ Termine com um exemplo de como obter dados do sistema ou como usá-los para uma 
 
 ## Implantação
 
-Adicione notas adicionais sobre como implantar isso em um sistema ativo
+## Terraform
+Abra o CMD na pasta do projeto e execute os seguintes passos:
+
+<br>Faça login na Azure usando o Azure CLI:
+```bash
+az login
+```
+Abrir o diretório onde está localizado o arquivo "main.tf"
+```bash
+terraform init
+```
+Crie um plano de execução para a infraestrutura:
+```bash
+terraform plan
+```
+Aplique o plano para criar os recursos na Azure
+```bash
+terraform apply
+```
 
 ## Ferramentas utilizadas
 
