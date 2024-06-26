@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c586c35b-f5cb-4884-8ea1-ad179bd01c89"
+				"spark.autotune.trackingId": "accd167b-c88f-47e9-9c77-7c402dd1d423"
 			}
 		},
 		"metadata": {
@@ -76,9 +76,10 @@
 					"df_orderItems = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/orderItems\")\r\n",
 					"df_orders = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/orders\")\r\n",
 					"df_employees = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
+					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/departmentProducts\")\r\n",
 					""
 				],
-				"execution_count": 24
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -848,6 +849,126 @@
 					"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orders)"
 				],
 				"execution_count": 49
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **DepartmentProducts**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_departmentProducts = df_departmentProducts.columns\r\n",
+					"print(colunas_departmentProducts)"
+				],
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"colunas_renomeadas_departmentProducts = {\r\n",
+					"    '$oid': 'CODIGO',\r\n",
+					"    'departmentProductId': 'CODIGO_DEPARTAMENTO_PRODUTO',\r\n",
+					"    'departmentId': 'CODIGO_DEPARTAMENTO',\r\n",
+					"    'productId': 'CODIGO_PRODUTO',\r\n",
+					"    'costPrice_$numberDouble': 'PRECO_CUSTO',\r\n",
+					"    '$numberInt': 'QUANTIDADE',\r\n",
+					"    'sellingPrice_$numberDouble': 'PRECO_VENDA',\r\n",
+					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
+					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
+					"    'nome_arquivo': 'NOME_ARQUIVO'\r\n",
+					"}\r\n",
+					"\r\n",
+					"for old_name, new_name in colunas_renomeadas_departmentProducts.items():\r\n",
+					"    df_departmentProducts = df_departmentProducts.withColumnRenamed(old_name, new_name)"
+				],
+				"execution_count": 16
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_departmentProducts.limit(1))"
+				],
+				"execution_count": 17
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"##### Salvando os dataframes formatados na camada silver."
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"silver_departmentProducts = 'abfss://silver@datalakeengdados.dfs.core.windows.net/departmentProducts'\r\n",
+					"\r\n",
+					"df_departmentProducts.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departmentProducts)"
+				],
+				"execution_count": 18
 			}
 		]
 	}
