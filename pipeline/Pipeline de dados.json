@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach_8mp",
+				"name": "Insercao de dados",
 				"type": "ForEach",
 				"dependsOn": [],
 				"userProperties": [],
@@ -14,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "Copy_8mp",
+							"name": "Collections",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -75,6 +75,33 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Camada Bronze",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Insercao de dados",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "bronze",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
 				}
 			}
 		],
