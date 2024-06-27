@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "156e2a20-04a9-48f6-8f23-8cbf3987ca57"
+				"spark.autotune.trackingId": "407745ea-ca53-47a1-a363-af7ea648fbcb"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"df_employees = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
 					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/departmentProducts\")"
 				],
-				"execution_count": 114
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -131,7 +131,7 @@
 					"\r\n",
 					"display(df_obt.limit(1))"
 				],
-				"execution_count": 115
+				"execution_count": 4
 			},
 			{
 				"cell_type": "markdown",
@@ -164,7 +164,27 @@
 					"\r\n",
 					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
 				],
-				"execution_count": 116
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"gold_obt_csv = 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT_csv'\r\n",
+					"\r\n",
+					"df_obt.write.format(\"csv\").mode(\"overwrite\").option(\"header\", \"true\").save(gold_obt_csv)"
+				],
+				"execution_count": 6
 			}
 		]
 	}
