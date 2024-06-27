@@ -71,9 +71,6 @@ terraform apply
 - **[MongoDB](https://www.mongodb.com/)** - é um banco de dados NoSQL orientado a documentos que armazena dados em formato JSON-like, conhecido por sua flexibilidade, escalabilidade e facilidade de uso, sendo amplamente utilizado para aplicações modernas que exigem alta performance e gerenciamento eficiente de grandes volumes de dados não estruturados.
 
 ## Colaboração
-
-Por favor, leia o [COLABORACAO](https://gist.github.com/usuario/colaboracao.md) para obter detalhes sobre o nosso código de conduta e o processo para nos enviar pedidos de solicitação.
-
 Se desejar publicar suas modificações em um repositório remoto no GitHub, siga estes passos:
 
 1. Crie um novo repositório vazio no GitHub.
@@ -88,10 +85,6 @@ git push -u origin master
 ```
 
 Isso configurará o repositório remoto e enviará suas modificações para lá.
-
-## Versão
-
-Fale sobre a versão e o controle de versões para o projeto. Para as versões disponíveis, observe as [tags neste repositório](https://github.com/suas/tags/do/projeto).
 
 ## Collaborators
 
@@ -111,4 +104,7 @@ Este projeto está sob a licença (sua licença) - veja o arquivo [LICENSE](http
 
 ## Referências
 
-Cite aqui todas as referências utilizadas neste projeto, pode ser outros repositórios, livros, artigos de internet etc.
+[ChatGPT](https://chatgpt.com/)
+[DatasideCommunity](https://www.youtube.com/@DatasideCommunity)
+[Datasen](https://www.datensen.com/blog)
+
