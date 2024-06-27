@@ -20,13 +20,11 @@ Este trabalho visa não apenas a construção de uma pipeline eficiente e escal�
 
 Essas instruções permitirão que você obtenha uma cópia do projeto em operação na sua máquina local para fins de desenvolvimento e teste.
 
-Consulte **[Implantação](#-implanta%C3%A7%C3%A3o)** para saber como implantar o projeto.
+Consulte **[Implantação](https://ozielsilveira.github.io/data-engineering-project/)** para saber como implantar o projeto.
 
 ## Desenho de Arquitetura
 
-Coloque uma imagem do seu projeto, como no exemplo abaixo:
-
-![image](https://github.com/jlsilva01/projeto-ed-satc/assets/484662/541de6ab-03fa-49b3-a29f-dec8857360c1)
+![image](https://raw.githubusercontent.com/ozielsilveira/data-engineering-project/master/mkdocs/docs/images/pipeline.png)
 
 ## Visão geral
 - O ambiente relacional – origem – tem 7 tabelas, 10.000 linhas para cada tabela principal.
@@ -41,28 +39,6 @@ Coloque uma imagem do seu projeto, como no exemplo abaixo:
 - Foram utilizadas 4 KPIs e 2 métricas para compor o dashboard no PowerBi.
 - O dashboard consome os dados do modelo OBT, direto da camada gold.
 - A documentação completa do trabalho está publicada no MkDocs.
-
-## Implantação
-
-## Terraform
-Abra o CMD na pasta do projeto e execute os seguintes passos:
-
-<br>Faça login na Azure usando o Azure CLI:
-```bash
-az login
-```
-Abrir o diretório onde está localizado o arquivo "main.tf"
-```bash
-terraform init
-```
-Crie um plano de execução para a infraestrutura:
-```bash
-terraform plan
-```
-Aplique o plano para criar os recursos na Azure
-```bash
-terraform apply
-```
 
 ## Ferramentas utilizadas
 
