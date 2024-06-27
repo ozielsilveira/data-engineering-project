@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8770ca34-b143-4020-8c51-242bd2cff671"
+				"spark.autotune.trackingId": "7d384f55-a2d7-4ae8-8aba-d0e37478bb9f"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"df_employees = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
 					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/departmentProducts\")"
 				],
-				"execution_count": 11
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -118,20 +118,20 @@
 					"df_customers.createOrReplaceTempView(\"customers\")\r\n",
 					"\r\n",
 					"df_obt = spark.sql(\"\"\"\r\n",
-					"SELECT p.CODIGO_PRODUTO, c.CODIGO_CLIENTE, d.CODIGO_DEPARTAMENTO, ot.CODIGO_PEDIDO, ot.QUANTIDADE,\r\n",
-					"e.CODIGO_FUNCIONARIO, e.SALARIO, dp.PRECO_CUSTO, dp.PRECO_VENDA\r\n",
+					"SELECT p.CODIGO_PRODUTO, c.CODIGO_CLIENTE, d.CODIGO_DEPARTAMENTO, ot.CODIGO_PEDIDO, o.CRIADO, ot.QUANTIDADE,\r\n",
+					"e.CODIGO_FUNCIONARIO, e.SALARIO, e.CADASTRADO, dp.PRECO_CUSTO, dp.PRECO_VENDA\r\n",
 					"FROM employees AS e\r\n",
 					"INNER JOIN departments AS d ON e.DEPARTAMENTO = d.CODIGO_DEPARTAMENTO\r\n",
 					"INNER JOIN departmentProducts AS dp ON dp.CODIGO_DEPARTAMENTO = d.CODIGO_DEPARTAMENTO\r\n",
+					"INNER JOIN orderItems AS ot ON ot.CODIGO_DEPARTAMENTO_PRODUTO = dp.CODIGO_DEPARTAMENTO_PRODUTO\r\n",
 					"INNER JOIN products AS p ON p.CODIGO_PRODUTO = dp.CODIGO_PRODUTO\r\n",
-					"INNER JOIN orderItems AS ot ON ot.CODIGO_PRODUTO = p.CODIGO_PRODUTO\r\n",
 					"INNER JOIN orders AS o ON o.CODIGO_PEDIDO = ot.CODIGO_PEDIDO\r\n",
 					"INNER JOIN customers AS c ON c.CODIGO_CLIENTE = o.CODIGO_CLIENTE\r\n",
 					"\"\"\")\r\n",
 					"\r\n",
 					"display(df_obt.limit(1))"
 				],
-				"execution_count": 12
+				"execution_count": 20
 			},
 			{
 				"cell_type": "markdown",
@@ -164,7 +164,7 @@
 					"\r\n",
 					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
 				],
-				"execution_count": 14
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -187,7 +187,7 @@
 					"%%sql\n",
 					"DROP TABLE IF EXISTS tabela_obt_oficial;"
 				],
-				"execution_count": 8
+				"execution_count": 22
 			},
 			{
 				"cell_type": "code",
@@ -212,7 +212,7 @@
 					"USING DELTA\r\n",
 					"LOCATION 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT'"
 				],
-				"execution_count": 16
+				"execution_count": 23
 			}
 		]
 	}
