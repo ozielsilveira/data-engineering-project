@@ -40,6 +40,8 @@ Na camada _gold_, os dados são refinados e otimizados para o consumo final por 
 
 ## Fluxo da Pipeline de dados
 
+![Pipeline](pipeline.png)
+
 ## Navegação
 
 - [MongoDB](mongodb.md)
