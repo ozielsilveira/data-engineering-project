@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "41ea05f1-cfea-4d52-ba60-683f2d05176b"
+				"spark.autotune.trackingId": "8770ca34-b143-4020-8c51-242bd2cff671"
 			}
 		},
 		"metadata": {
@@ -165,6 +165,29 @@
 					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
 				],
 				"execution_count": 14
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\n",
+					"DROP TABLE IF EXISTS tabela_obt_oficial;"
+				],
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
