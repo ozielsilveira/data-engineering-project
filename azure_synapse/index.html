@@ -20,7 +20,7 @@
     
     
       
-        <title>Azure Synapse - PIPELINE DE DADOS - FATURAMENTO ANUAL</title>
+        <title>Orquestração - PIPELINE DE DADOS - FATURAMENTO ANUAL</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#azure-synapse" class="md-skip">
+        <a href="#orquestracao" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Azure Synapse
+              Orquestração
             
           </span>
         </div>
@@ -244,7 +244,7 @@
           
   
   <span class="md-ellipsis">
-    Azure Synapse
+    Orquestração
   </span>
   
 
@@ -255,7 +255,7 @@
         
   
   <span class="md-ellipsis">
-    Azure Synapse
+    Orquestração
   </span>
   
 
@@ -319,11 +319,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ferramentas-utilizadas" class="md-nav__link">
+  <a href="#mongodb-no-synapse" class="md-nav__link">
     <span class="md-ellipsis">
-      Ferramentas Utilizadas
+      MongoDB no Synapse
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="MongoDB no Synapse">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siga-os-passos-a-seguir" class="md-nav__link">
+    <span class="md-ellipsis">
+      Siga os passos a seguir
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Siga os passos a seguir">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conexao-com-o-atlas-mongodb" class="md-nav__link">
+    <span class="md-ellipsis">
+      1 - Conexão com o Atlas MongoDB
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-selecionar-as-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      2 - Selecionar as collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selecione-o-destino-que-neste-caso-e-o-data-lake-em-seguida-escolha-o-container-landing-zone-dentro-do-data-lake-e-defina-o-formato-final-do-arquivo-como-parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      3 - Selecione o destino, que neste caso é o Data Lake. Em seguida, escolha o container "landing-zone" dentro do Data Lake e defina o formato final do arquivo como .parquet
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-selecionar-formato-do-arquivo-como-parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      4 - Selecionar formato do arquivo como "Parquet"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-selecionar-colunas-das-tabelas-de-origens-e-definir-seus-tipos-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      5 - Selecionar colunas das tabelas de origens e definir seus tipos de dados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -513,11 +579,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ferramentas-utilizadas" class="md-nav__link">
+  <a href="#mongodb-no-synapse" class="md-nav__link">
     <span class="md-ellipsis">
-      Ferramentas Utilizadas
+      MongoDB no Synapse
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="MongoDB no Synapse">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siga-os-passos-a-seguir" class="md-nav__link">
+    <span class="md-ellipsis">
+      Siga os passos a seguir
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Siga os passos a seguir">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conexao-com-o-atlas-mongodb" class="md-nav__link">
+    <span class="md-ellipsis">
+      1 - Conexão com o Atlas MongoDB
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-selecionar-as-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      2 - Selecionar as collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selecione-o-destino-que-neste-caso-e-o-data-lake-em-seguida-escolha-o-container-landing-zone-dentro-do-data-lake-e-defina-o-formato-final-do-arquivo-como-parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      3 - Selecione o destino, que neste caso é o Data Lake. Em seguida, escolha o container "landing-zone" dentro do Data Lake e defina o formato final do arquivo como .parquet
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-selecionar-formato-do-arquivo-como-parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      4 - Selecionar formato do arquivo como "Parquet"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-selecionar-colunas-das-tabelas-de-origens-e-definir-seus-tipos-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      5 - Selecionar colunas das tabelas de origens e definir seus tipos de dados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -545,7 +677,7 @@
                   
 
 
-<h1 id="azure-synapse">Azure Synapse</h1>
+<h1 id="orquestracao">Orquestração</h1>
 <h2 id="descricao">Descrição</h2>
 <p>Azure Synapse é utilizado para processar e analisar grandes volumes de dados. Ele oferece um ambiente unificado para ingestão, preparação, gerenciamento e entrega de dados para BI e machine learning.</p>
 <h2 id="objetivo">Objetivo</h2>
@@ -558,14 +690,22 @@
 <li><strong>Limpeza de Dados (Silver)</strong>: Remoção de duplicatas, correção de erros e preenchimento de valores ausentes.</li>
 <li><strong>Refinamento de Dados (Gold)</strong>: Criação de métricas e agregações para análise final.</li>
 </ol>
-<h2 id="ferramentas-utilizadas">Ferramentas Utilizadas</h2>
-<ul>
-<li><strong>Azure Synapse Studio</strong>: Ambiente para desenvolvimento e gestão de pipelines de dados.</li>
-<li><strong>Apache Spark</strong>: Para processamento de dados em grande escala.</li>
-<li><strong>SQL</strong>: Para consultas e transformações de dados.</li>
-</ul>
+<h2 id="mongodb-no-synapse">MongoDB no Synapse</h2>
+<h3 id="siga-os-passos-a-seguir">Siga os passos a seguir</h3>
+<h4 id="1-conexao-com-o-atlas-mongodb">1 - Conexão com o Atlas MongoDB</h4>
+<p><img alt="New connection" src="../images/new-connection.jpeg" /></p>
+<h4 id="2-selecionar-as-collections">2 - Selecionar as collections</h4>
+<p><img alt="Source data" src="../images/source-data.jpeg" /></p>
+<h4 id="3-selecione-o-destino-que-neste-caso-e-o-data-lake-em-seguida-escolha-o-container-landing-zone-dentro-do-data-lake-e-defina-o-formato-final-do-arquivo-como-parquet">3 - Selecione o destino, que neste caso é o Data Lake. Em seguida, escolha o container "landing-zone" dentro do Data Lake e defina o formato final do arquivo como .parquet</h4>
+<p><img alt="Data set" src="../images/data-set.jpeg" /></p>
+<h4 id="4-selecionar-formato-do-arquivo-como-parquet">4 - Selecionar formato do arquivo como "Parquet"</h4>
+<p><img alt="File Format" src="../images/file-format.jpeg" /></p>
+<h4 id="5-selecionar-colunas-das-tabelas-de-origens-e-definir-seus-tipos-de-dados">5 - Selecionar colunas das tabelas de origens e definir seus tipos de dados</h4>
+<p><img alt="Schema map" src="../images/schema-map.jpeg" /></p>
 <h2 id="exemplo-de-fluxo">Exemplo de fluxo</h2>
-<p><img alt="Pipeline de dados" src="../flow-pipeline.png" /></p>
+<p><img alt="Pipeline de dados" src="../images/flow-pipeline.png" /></p>
+<p>Fluxo da pipeline de dados
+Primeiro, o loop "for each" percorre um array contendo todas as collections selecionadas, inserindo-as individualmente. Após a conclusão bem-sucedida dessa etapa, a pipeline continua e passa pelas camadas bronze, silver e gold.</p>
 <p><a href="../">Voltar para a página inicial</a></p>
 
 
