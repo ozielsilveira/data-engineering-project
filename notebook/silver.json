@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "accd167b-c88f-47e9-9c77-7c402dd1d423"
+				"spark.autotune.trackingId": "7bc957ec-4d49-45f0-b93e-a72093aa385c"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/departmentProducts\")\r\n",
 					""
 				],
-				"execution_count": 9
+				"execution_count": 55
 			},
 			{
 				"cell_type": "code",
@@ -118,9 +118,12 @@
 					"df_orders = df_orders.withColumn(\"nome_arquivo\", lit(\"orders\"))\r\n",
 					"\r\n",
 					"df_employees = df_employees.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
-					"df_employees = df_employees.withColumn(\"nome_arquivo\", lit(\"employees\"))"
+					"df_employees = df_employees.withColumn(\"nome_arquivo\", lit(\"employees\"))\r\n",
+					"\r\n",
+					"df_departmentProducts = df_departmentProducts.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
+					"df_departmentProducts = df_departmentProducts.withColumn(\"nome_arquivo\", lit(\"departmentProducts\"))"
 				],
-				"execution_count": 25
+				"execution_count": 56
 			},
 			{
 				"cell_type": "markdown",
@@ -166,7 +169,7 @@
 					"print(colunas_products)\r\n",
 					""
 				],
-				"execution_count": 26
+				"execution_count": 57
 			},
 			{
 				"cell_type": "code",
@@ -198,7 +201,7 @@
 					"for old_name, new_name in colunas_renomeadas_products.items():\r\n",
 					"    df_products = df_products.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 27
+				"execution_count": 58
 			},
 			{
 				"cell_type": "code",
@@ -217,7 +220,7 @@
 				"source": [
 					"display(df_products.limit(1))"
 				],
-				"execution_count": 28
+				"execution_count": 59
 			},
 			{
 				"cell_type": "markdown",
@@ -254,7 +257,7 @@
 					"\r\n",
 					"df_products.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_products)"
 				],
-				"execution_count": 29
+				"execution_count": 60
 			},
 			{
 				"cell_type": "markdown",
@@ -286,7 +289,7 @@
 					"colunas_customers = df_customers.columns\r\n",
 					"print(colunas_customers)"
 				],
-				"execution_count": 30
+				"execution_count": 61
 			},
 			{
 				"cell_type": "code",
@@ -316,7 +319,7 @@
 					"for old_name, new_name in colunas_renomeadas_customers.items():\r\n",
 					"    df_customers = df_customers.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 31
+				"execution_count": 62
 			},
 			{
 				"cell_type": "code",
@@ -335,7 +338,7 @@
 				"source": [
 					"display(df_customers.limit(1))"
 				],
-				"execution_count": 32
+				"execution_count": 63
 			},
 			{
 				"cell_type": "markdown",
@@ -372,7 +375,7 @@
 					"\r\n",
 					"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_customers)"
 				],
-				"execution_count": 33
+				"execution_count": 64
 			},
 			{
 				"cell_type": "markdown",
@@ -404,7 +407,7 @@
 					"colunas_employees = df_employees.columns\r\n",
 					"print(colunas_employees)"
 				],
-				"execution_count": 34
+				"execution_count": 65
 			},
 			{
 				"cell_type": "code",
@@ -436,7 +439,7 @@
 					"for old_name, new_name in colunas_renomeadas_employees.items():\r\n",
 					"    df_employees = df_employees.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 35
+				"execution_count": 66
 			},
 			{
 				"cell_type": "code",
@@ -455,7 +458,7 @@
 				"source": [
 					"display(df_employees.limit(1))"
 				],
-				"execution_count": 36
+				"execution_count": 67
 			},
 			{
 				"cell_type": "markdown",
@@ -492,7 +495,7 @@
 					"\r\n",
 					"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_employees)"
 				],
-				"execution_count": 37
+				"execution_count": 68
 			},
 			{
 				"cell_type": "markdown",
@@ -524,7 +527,7 @@
 					"colunas_departments = df_departments.columns\r\n",
 					"print(colunas_departments)"
 				],
-				"execution_count": 38
+				"execution_count": 69
 			},
 			{
 				"cell_type": "code",
@@ -553,7 +556,7 @@
 					"for old_name, new_name in colunas_renomeadas_departments.items():\r\n",
 					"    df_departments = df_departments.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 39
+				"execution_count": 70
 			},
 			{
 				"cell_type": "code",
@@ -572,7 +575,7 @@
 				"source": [
 					"display(df_departments.limit(1))"
 				],
-				"execution_count": 40
+				"execution_count": 71
 			},
 			{
 				"cell_type": "markdown",
@@ -609,7 +612,7 @@
 					"\r\n",
 					"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departments)"
 				],
-				"execution_count": 41
+				"execution_count": 72
 			},
 			{
 				"cell_type": "markdown",
@@ -641,7 +644,7 @@
 					"colunas_orderItems = df_orderItems.columns\r\n",
 					"print(colunas_orderItems)"
 				],
-				"execution_count": 42
+				"execution_count": 85
 			},
 			{
 				"cell_type": "code",
@@ -663,8 +666,8 @@
 					"    'orderId': 'CODIGO_PEDIDO',\r\n",
 					"    'productId': 'CODIGO_PRODUTO',\r\n",
 					"    'productName': 'NOME_DO_PRODUTO',\r\n",
-					"    '$numberInt': 'QUANTIDADE',\r\n",
-					"    'unitPrice_$numberDoublE': 'PRECO_UNITARIO',\r\n",
+					"    'quantity_$numberInt': 'QUANTIDADE',\r\n",
+					"    'unitPrice_$numberDouble': 'PRECO_UNITARIO',\r\n",
 					"    'totalPrice_$numberDouble': 'PRECO_TOTAL',\r\n",
 					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
 					"    'data_hora_silver': 'DATA_HORA_SILVER',\r\n",
@@ -674,7 +677,7 @@
 					"for old_name, new_name in colunas_renomeadas_orderItems.items():\r\n",
 					"    df_orderItems = df_orderItems.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 43
+				"execution_count": 86
 			},
 			{
 				"cell_type": "code",
@@ -693,7 +696,7 @@
 				"source": [
 					"display(df_orderItems.limit(1))"
 				],
-				"execution_count": 44
+				"execution_count": 87
 			},
 			{
 				"cell_type": "markdown",
@@ -730,7 +733,7 @@
 					"\r\n",
 					"df_orderItems.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orderItems)"
 				],
-				"execution_count": 45
+				"execution_count": 88
 			},
 			{
 				"cell_type": "markdown",
@@ -762,7 +765,7 @@
 					"colunas_orders = df_orders.columns\r\n",
 					"print(colunas_orders)"
 				],
-				"execution_count": 46
+				"execution_count": 77
 			},
 			{
 				"cell_type": "code",
@@ -792,7 +795,7 @@
 					"for old_name, new_name in colunas_renomeadas_orders.items():\r\n",
 					"    df_orders = df_orders.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 47
+				"execution_count": 78
 			},
 			{
 				"cell_type": "code",
@@ -811,7 +814,7 @@
 				"source": [
 					"display(df_orderItems.limit(1))"
 				],
-				"execution_count": 48
+				"execution_count": 79
 			},
 			{
 				"cell_type": "markdown",
@@ -848,7 +851,7 @@
 					"\r\n",
 					"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orders)"
 				],
-				"execution_count": 49
+				"execution_count": 80
 			},
 			{
 				"cell_type": "markdown",
@@ -880,7 +883,7 @@
 					"colunas_departmentProducts = df_departmentProducts.columns\r\n",
 					"print(colunas_departmentProducts)"
 				],
-				"execution_count": 10
+				"execution_count": 81
 			},
 			{
 				"cell_type": "code",
@@ -912,7 +915,7 @@
 					"for old_name, new_name in colunas_renomeadas_departmentProducts.items():\r\n",
 					"    df_departmentProducts = df_departmentProducts.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 16
+				"execution_count": 82
 			},
 			{
 				"cell_type": "code",
@@ -931,7 +934,7 @@
 				"source": [
 					"display(df_departmentProducts.limit(1))"
 				],
-				"execution_count": 17
+				"execution_count": 83
 			},
 			{
 				"cell_type": "markdown",
@@ -968,7 +971,7 @@
 					"\r\n",
 					"df_departmentProducts.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departmentProducts)"
 				],
-				"execution_count": 18
+				"execution_count": 84
 			}
 		]
 	}
