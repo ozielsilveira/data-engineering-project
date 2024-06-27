@@ -42,32 +42,6 @@ Coloque uma imagem do seu projeto, como no exemplo abaixo:
 - O dashboard consome os dados do modelo OBT, direto da camada gold.
 - A documentação completa do trabalho está publicada no MkDocs.
 
-## Pré-requisitos
-
-De que coisas você precisa para instalar o software e como instalá-lo?
-
-```
-Dar exemplos
-```
-
-## Instalação
-
-Uma série de exemplos passo-a-passo que informam o que você deve executar para ter um ambiente de desenvolvimento em execução.
-
-Diga como essa etapa será:
-
-```
-Dar exemplos
-```
-
-E repita:
-
-```
-Até finalizar
-```
-
-Termine com um exemplo de como obter dados do sistema ou como usá-los para uma pequena demonstração.
-
 ## Implantação
 
 ## Terraform
