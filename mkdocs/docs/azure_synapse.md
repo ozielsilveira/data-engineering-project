@@ -23,4 +23,7 @@ O objetivo do Azure Synapse no projeto é fornecer uma plataforma robusta para p
 - **Apache Spark**: Para processamento de dados em grande escala.
 - **SQL**: Para consultas e transformações de dados.
 
+## Exemplo de fluxo
+![Pipeline de dados](flow-pipeline.png)
+
 [Voltar para a página inicial](index.md)
