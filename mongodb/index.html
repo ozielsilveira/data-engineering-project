@@ -291,6 +291,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Coleções">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criacao-das-colecoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criação das Coleções
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insercao-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inserção de Dados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -529,6 +553,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Coleções">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criacao-das-colecoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criação das Coleções
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insercao-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inserção de Dados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -600,7 +648,105 @@
 <p>O objetivo do MongoDB no projeto é fornecer um armazenamento flexível e escalável para os dados brutos, facilitando a ingestão e a recuperação rápida desses dados para processamento subsequente.</p>
 <h2 id="estrutura-de-dados">Estrutura de Dados</h2>
 <h3 id="colecoes">Coleções</h3>
-<!-- Incluir aqui a estrutura das tabelas -->
+<h4 id="criacao-das-colecoes">Criação das Coleções</h4>
+<pre><code class="language-javascript">// Criar coleção de clientes
+db.createCollection(&quot;Customer&quot;);
+
+// Criar coleção de departamentos
+db.createCollection(&quot;Department&quot;);
+
+// Criar coleção de funcionários
+db.createCollection(&quot;Employees&quot;);
+
+// Criar coleção de pedidos
+db.createCollection(&quot;Order&quot;);
+
+// Criar coleção de produtos
+db.createCollection(&quot;Product&quot;);
+
+// Criar coleção de itens de pedidos
+db.createCollection(&quot;OrderItem&quot;);
+
+// Criar coleção de produtos de departamentos
+db.createCollection(&quot;DepartmentProducts&quot;);
+</code></pre>
+<h4 id="insercao-de-dados">Inserção de Dados</h4>
+<pre><code class="language-javascript">// Inserir documentos na coleção Customer
+db.Customer.insertMany([
+  {
+    customerId: &quot;75ecd863-79fb-4fb0-9327-9bbc2d9fb8ce&quot;,
+    name: &quot;Brenda Moore&quot;,
+    address: &quot;85358 Jacob Mall Suite 243\nWest Kevinview, NY 06029&quot;,
+    email: &quot;nataliegibson@example.net&quot;,
+  },
+]);
+
+// Inserir documentos na coleção Department
+db.Department.insertMany([
+  {
+    departmentId: &quot;5dfef901-7fce-4adc-8b90-3d33d154e0ab&quot;,
+    name: &quot;Chen-Walker&quot;,
+    location: &quot;South Connor&quot;,
+  },
+]);
+
+// Inserir documentos na coleção Employees
+db.Employees.insertMany([
+  {
+    employeeId: &quot;917c2c66-c252-4a46-9093-2703f452e708&quot;,
+    name: &quot;Elizabeth Thompson&quot;,
+    position: &quot;Oncologist&quot;,
+    createdAt: &quot;2024-03-10T15:40:23.367115&quot;,
+    salary: 4232.44,
+    departmentId: &quot;4f87a6dd-ed90-45cb-9070-2015852dc0f9&quot;,
+  },
+]);
+
+// Inserir documentos na coleção Order
+db.Order.insertMany([
+  {
+    orderId: &quot;a3b386cb-49fb-4b04-915c-ef6acda74b3d&quot;,
+    customerId: &quot;03537290-1f2f-4044-b4d0-8d8fc31c11e8&quot;,
+    createdAt: &quot;2022-06-23T16:40:50.876325&quot;,
+    total: 0,
+  },
+]);
+
+// Inserir documentos na coleção Product
+db.Product.insertMany([
+  {
+    productId: &quot;efedfafb-7c3c-40aa-8b3a-c15f752b60e3&quot;,
+    name: &quot;something&quot;,
+    description:
+      &quot;Morning current why understand research plant place perhaps. Couple prove white.\nRepublican physical next cost.&quot;,
+  },
+]);
+
+// Inserir documentos na coleção OrderItem
+db.OrderItem.insertMany([
+  {
+    itemId: &quot;496a7114-6e54-4c22-bf9d-5f1ee888b305&quot;,
+    orderId: &quot;bcd199af-37b2-498c-b5fb-2a7849b44d61&quot;,
+    productId: &quot;04d5f343-d5cc-494c-aa93-322bb8cf3e50&quot;,
+    productName: &quot;Product&quot;,
+    quantity: 7,
+    unitPrice: 331.83,
+    totalPrice: 2322.81,
+  },
+]);
+
+// Inserir documentos na coleção DepartmentProducts
+db.DepartmentProducts.insertMany([
+  {
+    departmentProductId: &quot;fccb2fd0-59f1-4575-98d4-f5a8bccfb68f&quot;,
+    departmentId: &quot;46b3838b-a0d1-423a-9ed8-03b23dfa340d&quot;,
+    productId: &quot;ead17aec-7dbc-4894-b548-19024513cdf2&quot;,
+    costPrice: 44.56,
+    sellingPrice: 587.39,
+    stockQuantity: 39,
+  },
+]);
+</code></pre>
 <h2 id="processos">Processos</h2>
 <h3 id="ingestao-de-dados">Ingestão de Dados</h3>
 <ol>
@@ -609,9 +755,47 @@
 </ol>
 <h3 id="consultas-de-exemplos">Consultas de Exemplos</h3>
 <ul>
-<li><strong>Consultas</strong>:</li>
+<li>
+<p><strong>Consultas</strong>:</p>
+</li>
+<li>
+<p>Obter todos os clientes:</p>
+<pre><code>```javascript
+db.Customer.find({})
+```
+</code></pre>
+<ul>
+<li>Obter todos os departamentos:</li>
 </ul>
-<!-- Incluir aqui a as consultas -->
+<p><code>javascript
+  db.Department.find({});</code></p>
+<ul>
+<li>Obter todos os funcionários:</li>
+</ul>
+<p><code>javascript
+  db.Employees.find({});</code></p>
+<ul>
+<li>Obter todas as ordens:</li>
+</ul>
+<p><code>javascript
+  db.Order.find({});</code></p>
+<ul>
+<li>Obter todos os produtos:</li>
+</ul>
+<p><code>javascript
+  db.Product.find({});</code></p>
+<ul>
+<li>Obter todos os itens de ordens:</li>
+</ul>
+<p><code>javascript
+  db.OrderItem.find({});</code></p>
+<ul>
+<li>Obter todos os produtos de departamentos:</li>
+</ul>
+<p><code>javascript
+  db.DepartmentProducts.find({});</code></p>
+</li>
+</ul>
 <h2 id="ferramentas-utilizadas">Ferramentas Utilizadas</h2>
 <ul>
 <li><strong>MongoDB Atlas</strong>: Plataforma de banco de dados como serviço (DBaaS) para MongoDB.</li>
@@ -619,6 +803,8 @@
 <li><strong>Drivers MongoDB</strong>: Usados para conectar e interagir com o MongoDB a partir de diferentes linguagens de programação.</li>
 </ul>
 <p><a href="../">Voltar para a página inicial</a></p>
+<hr />
+<p>Se precisar de mais alguma coisa, estou à disposição!</p>
 
 
 
