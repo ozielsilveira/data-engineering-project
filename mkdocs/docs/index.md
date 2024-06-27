@@ -40,12 +40,12 @@ Na camada _gold_, os dados são refinados e otimizados para o consumo final por 
 
 ## Fluxo da Pipeline de dados
 
-![Pipeline](pipeline.png)
+![Pipeline](images/pipeline.png)
 
 ## Navegação
 
 - [MongoDB](mongodb.md)
-- [Azure Synapse](azure_synapse.md)
+- [Orquestração](azure_synapse.md)
 - [Landing](landing.md)
 - [Bronze](bronze.md)
 - [Silver](silver.md)

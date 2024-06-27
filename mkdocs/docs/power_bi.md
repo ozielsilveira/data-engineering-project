@@ -32,7 +32,7 @@ O objetivo do Power BI no projeto é fornecer uma plataforma de visualização d
 
 ### Exemplos de Visualizações
 
-![alt text](image.png)
+![Power BI](images/power-bi.png)
 
 ## Ferramentas Utilizadas
 
