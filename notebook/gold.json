@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "407745ea-ca53-47a1-a363-af7ea648fbcb"
+				"spark.autotune.trackingId": "3cbdd0c8-da3e-47ad-9307-835eceec3046"
 			}
 		},
 		"metadata": {
@@ -165,26 +165,6 @@
 					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
 				],
 				"execution_count": 5
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"gold_obt_csv = 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT_csv'\r\n",
-					"\r\n",
-					"df_obt.write.format(\"csv\").mode(\"overwrite\").option(\"header\", \"true\").save(gold_obt_csv)"
-				],
-				"execution_count": 6
 			}
 		]
 	}
