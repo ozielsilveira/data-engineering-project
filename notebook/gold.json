@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "3cbdd0c8-da3e-47ad-9307-835eceec3046"
+				"spark.autotune.trackingId": "aa9ee539-8922-4860-93fd-034dfd5d8394"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"df_employees = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
 					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/departmentProducts\")"
 				],
-				"execution_count": 3
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
@@ -131,7 +131,7 @@
 					"\r\n",
 					"display(df_obt.limit(1))"
 				],
-				"execution_count": 4
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -164,7 +164,32 @@
 					"\r\n",
 					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
 				],
-				"execution_count": 5
+				"execution_count": 14
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\r\n",
+					"CREATE TABLE tabela_obt_oficial\r\n",
+					"USING DELTA\r\n",
+					"LOCATION 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT'"
+				],
+				"execution_count": 16
 			}
 		]
 	}
