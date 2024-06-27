@@ -24,9 +24,23 @@ Consulte **[Implantação](#-implanta%C3%A7%C3%A3o)** para saber como implantar 
 
 ## Desenho de Arquitetura
 
-Coloqui uma imagem do seu projeto, como no exemplo abaixo:
+Coloque uma imagem do seu projeto, como no exemplo abaixo:
 
 ![image](https://github.com/jlsilva01/projeto-ed-satc/assets/484662/541de6ab-03fa-49b3-a29f-dec8857360c1)
+
+## Visão geral
+- O ambiente relacional – origem – tem 7 tabelas, 10.000 linhas para cada tabela principal.
+- Foi utilizado a biblioteca Faker do Python, para gerar as massas de dados e popular o ambiente relacional.
+- A ingestão dos dados foi feita através do Azure Synapse Analytics
+- O Data Lake foi criado em cima de um object storage (cloud) usando a arquitetura medalhão (Camadas Landing, Bronze, Silver e Gold).
+- Os dados serão gravados no object storage no formato Delta Lake nas camadas Bronze, Silver e Gold.
+  A transformação será feita através do Apache Spark (Python/pyspark).
+- As funções de ingestão, transformação e movimentação dos dados entre as camadas são
+  orquestradas e agendadas através da ferramenta Azure Synapse Analytics.
+- Os dados serão disponibilizados na camada Gold no formato dimensional (OBT).
+- Foram utilizadas 4 KPIs e 2 métricas para compor o dashboard no PowerBi.
+- O dashboard consome os dados do modelo OBT, direto da camada gold.
+- A documentação completa do trabalho está publicada no MkDocs.
 
 ## Pré-requisitos
 
