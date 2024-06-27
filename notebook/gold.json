@@ -1,0 +1,219 @@
+{
+	"name": "gold",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPool01",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "7d384f55-a2d7-4ae8-8aba-d0e37478bb9f"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/be79d449-7503-4939-ad28-15fb945d2ddb/resourceGroups/engdados/providers/Microsoft.Synapse/workspaces/synapseengdados/bigDataPools/SparkPool01",
+				"name": "SparkPool01",
+				"type": "Spark",
+				"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## **Gerando um dataframe dos delta lake no container silver do Azure Data Lake Storage.**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"df_products = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/products\")\r\n",
+					"df_customers = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/customers\")\r\n",
+					"df_departments = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/departments\")\r\n",
+					"df_orderItems = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/orderItems\")\r\n",
+					"df_orders = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/orders\")\r\n",
+					"df_employees = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/employees\")\r\n",
+					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://silver@datalakeengdados.dfs.core.windows.net/departmentProducts\")"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Criando uma OBT**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"df_employees.createOrReplaceTempView(\"employees\")\r\n",
+					"df_departments.createOrReplaceTempView(\"departments\")\r\n",
+					"df_departmentProducts.createOrReplaceTempView(\"departmentProducts\")\r\n",
+					"df_products.createOrReplaceTempView(\"products\")\r\n",
+					"df_orderItems.createOrReplaceTempView(\"orderItems\")\r\n",
+					"df_orders.createOrReplaceTempView(\"orders\")\r\n",
+					"df_customers.createOrReplaceTempView(\"customers\")\r\n",
+					"\r\n",
+					"df_obt = spark.sql(\"\"\"\r\n",
+					"SELECT p.CODIGO_PRODUTO, c.CODIGO_CLIENTE, d.CODIGO_DEPARTAMENTO, ot.CODIGO_PEDIDO, o.CRIADO, ot.QUANTIDADE,\r\n",
+					"e.CODIGO_FUNCIONARIO, e.SALARIO, e.CADASTRADO, dp.PRECO_CUSTO, dp.PRECO_VENDA\r\n",
+					"FROM employees AS e\r\n",
+					"INNER JOIN departments AS d ON e.DEPARTAMENTO = d.CODIGO_DEPARTAMENTO\r\n",
+					"INNER JOIN departmentProducts AS dp ON dp.CODIGO_DEPARTAMENTO = d.CODIGO_DEPARTAMENTO\r\n",
+					"INNER JOIN orderItems AS ot ON ot.CODIGO_DEPARTAMENTO_PRODUTO = dp.CODIGO_DEPARTAMENTO_PRODUTO\r\n",
+					"INNER JOIN products AS p ON p.CODIGO_PRODUTO = dp.CODIGO_PRODUTO\r\n",
+					"INNER JOIN orders AS o ON o.CODIGO_PEDIDO = ot.CODIGO_PEDIDO\r\n",
+					"INNER JOIN customers AS c ON c.CODIGO_CLIENTE = o.CODIGO_CLIENTE\r\n",
+					"\"\"\")\r\n",
+					"\r\n",
+					"display(df_obt.limit(1))"
+				],
+				"execution_count": 20
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### **Salvar a OBT em formato delta na camada gold.**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"gold_obt = 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT'\r\n",
+					"\r\n",
+					"df_obt.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(gold_obt)"
+				],
+				"execution_count": 21
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\n",
+					"DROP TABLE IF EXISTS tabela_obt_oficial;"
+				],
+				"execution_count": 22
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\r\n",
+					"CREATE TABLE IF NOT EXISTS tabela_obt_oficial\r\n",
+					"USING DELTA\r\n",
+					"LOCATION 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT'"
+				],
+				"execution_count": 23
+			}
+		]
+	}
+}

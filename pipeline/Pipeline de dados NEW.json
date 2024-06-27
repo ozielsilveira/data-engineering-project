@@ -1,5 +1,5 @@
 {
-	"name": "Pipeline de dados",
+	"name": "Pipeline de dados NEW",
 	"properties": {
 		"activities": [
 			{
@@ -57,7 +57,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "SourceDataset_8mp",
+									"referenceName": "SourceDataset_fr7",
 									"type": "DatasetReference",
 									"parameters": {
 										"cw_collection": "@item().source.collection"
@@ -66,7 +66,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DestinationDataset_8mp",
+									"referenceName": "DestinationDataset_fr7",
 									"type": "DatasetReference",
 									"parameters": {
 										"cw_fileName": "@item().destination.fileName"
@@ -101,13 +101,7 @@
 						"referenceName": "bronze",
 						"type": "NotebookReference"
 					},
-					"snapshot": true,
-					"conf": {
-						"spark.dynamicAllocation.enabled": null,
-						"spark.dynamicAllocation.minExecutors": null,
-						"spark.dynamicAllocation.maxExecutors": null
-					},
-					"numExecutors": null
+					"snapshot": true
 				}
 			},
 			{
@@ -401,7 +395,8 @@
 											"path": "$['salary']['$numberDouble']"
 										},
 										"sink": {
-											"name": "$numberDouble"
+											"name": "$numberDouble",
+											"type": "Double"
 										}
 									},
 									{
@@ -453,10 +448,10 @@
 									},
 									{
 										"source": {
-											"path": "$['productId']"
+											"path": "$['departmentProductId']"
 										},
 										"sink": {
-											"name": "productId"
+											"name": "departmentProductId"
 										}
 									},
 									{
@@ -472,7 +467,7 @@
 											"path": "$['quantity']['$numberInt']"
 										},
 										"sink": {
-											"name": "quantity_$numberInt",
+											"name": "$numberInt",
 											"type": "Int32"
 										}
 									},
@@ -487,29 +482,11 @@
 									},
 									{
 										"source": {
-											"path": "$['unitPrice']['$numberInt']"
-										},
-										"sink": {
-											"name": "unitPrice_$numberInt",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
 											"path": "$['totalPrice']['$numberDouble']"
 										},
 										"sink": {
 											"name": "totalPrice_$numberDouble",
 											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"path": "$['totalPrice']['$numberInt']"
-										},
-										"sink": {
-											"name": "totalPrice_$numberInt",
-											"type": "Int32"
 										}
 									}
 								]
@@ -565,7 +542,7 @@
 										},
 										"sink": {
 											"name": "$numberInt",
-											"type": "Double"
+											"type": "Int32"
 										}
 									}
 								]
@@ -588,8 +565,7 @@
 											"path": "$['_id']['$oid']"
 										},
 										"sink": {
-											"name": "$oid",
-											"type": "String"
+											"name": "$oid"
 										}
 									},
 									{
@@ -597,8 +573,7 @@
 											"path": "$['productId']"
 										},
 										"sink": {
-											"name": "productId",
-											"type": "String"
+											"name": "productId"
 										}
 									},
 									{
@@ -606,8 +581,7 @@
 											"path": "$['name']"
 										},
 										"sink": {
-											"name": "name",
-											"type": "String"
+											"name": "name"
 										}
 									},
 									{
@@ -615,8 +589,7 @@
 											"path": "$['description']"
 										},
 										"sink": {
-											"name": "description",
-											"type": "String"
+											"name": "description"
 										}
 									}
 								]
