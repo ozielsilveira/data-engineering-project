@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7bc957ec-4d49-45f0-b93e-a72093aa385c"
+				"spark.autotune.trackingId": "5009ca25-3d41-4101-8bcc-90b6799f6ad8"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"df_departmentProducts = spark.read.format(\"delta\").load(\"abfss://bronze@datalakeengdados.dfs.core.windows.net/departmentProducts\")\r\n",
 					""
 				],
-				"execution_count": 55
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -123,7 +123,7 @@
 					"df_departmentProducts = df_departmentProducts.withColumn(\"data_hora_silver\", current_timestamp())\r\n",
 					"df_departmentProducts = df_departmentProducts.withColumn(\"nome_arquivo\", lit(\"departmentProducts\"))"
 				],
-				"execution_count": 56
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -169,7 +169,7 @@
 					"print(colunas_products)\r\n",
 					""
 				],
-				"execution_count": 57
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -201,7 +201,7 @@
 					"for old_name, new_name in colunas_renomeadas_products.items():\r\n",
 					"    df_products = df_products.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 58
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -220,7 +220,7 @@
 				"source": [
 					"display(df_products.limit(1))"
 				],
-				"execution_count": 59
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -257,7 +257,7 @@
 					"\r\n",
 					"df_products.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_products)"
 				],
-				"execution_count": 60
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -289,7 +289,7 @@
 					"colunas_customers = df_customers.columns\r\n",
 					"print(colunas_customers)"
 				],
-				"execution_count": 61
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -319,7 +319,7 @@
 					"for old_name, new_name in colunas_renomeadas_customers.items():\r\n",
 					"    df_customers = df_customers.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 62
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -338,7 +338,7 @@
 				"source": [
 					"display(df_customers.limit(1))"
 				],
-				"execution_count": 63
+				"execution_count": 10
 			},
 			{
 				"cell_type": "markdown",
@@ -375,7 +375,7 @@
 					"\r\n",
 					"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_customers)"
 				],
-				"execution_count": 64
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
@@ -407,7 +407,7 @@
 					"colunas_employees = df_employees.columns\r\n",
 					"print(colunas_employees)"
 				],
-				"execution_count": 65
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -439,7 +439,7 @@
 					"for old_name, new_name in colunas_renomeadas_employees.items():\r\n",
 					"    df_employees = df_employees.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 66
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -458,7 +458,7 @@
 				"source": [
 					"display(df_employees.limit(1))"
 				],
-				"execution_count": 67
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -495,7 +495,7 @@
 					"\r\n",
 					"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_employees)"
 				],
-				"execution_count": 68
+				"execution_count": 15
 			},
 			{
 				"cell_type": "markdown",
@@ -527,7 +527,7 @@
 					"colunas_departments = df_departments.columns\r\n",
 					"print(colunas_departments)"
 				],
-				"execution_count": 69
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
@@ -556,7 +556,7 @@
 					"for old_name, new_name in colunas_renomeadas_departments.items():\r\n",
 					"    df_departments = df_departments.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 70
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -575,7 +575,7 @@
 				"source": [
 					"display(df_departments.limit(1))"
 				],
-				"execution_count": 71
+				"execution_count": 18
 			},
 			{
 				"cell_type": "markdown",
@@ -612,7 +612,7 @@
 					"\r\n",
 					"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departments)"
 				],
-				"execution_count": 72
+				"execution_count": 19
 			},
 			{
 				"cell_type": "markdown",
@@ -644,7 +644,7 @@
 					"colunas_orderItems = df_orderItems.columns\r\n",
 					"print(colunas_orderItems)"
 				],
-				"execution_count": 85
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -664,9 +664,9 @@
 					"    '$oid': 'CODIGO',\r\n",
 					"    'itemId': 'CODIGO_ITEM',\r\n",
 					"    'orderId': 'CODIGO_PEDIDO',\r\n",
-					"    'productId': 'CODIGO_PRODUTO',\r\n",
+					"    'departmentProductId': 'CODIGO_DEPARTAMENTO_PRODUTO',\r\n",
 					"    'productName': 'NOME_DO_PRODUTO',\r\n",
-					"    'quantity_$numberInt': 'QUANTIDADE',\r\n",
+					"    '$numberInt': 'QUANTIDADE',\r\n",
 					"    'unitPrice_$numberDouble': 'PRECO_UNITARIO',\r\n",
 					"    'totalPrice_$numberDouble': 'PRECO_TOTAL',\r\n",
 					"    'data_hora_bronze': 'DATA_HORA_BRONZE',\r\n",
@@ -677,7 +677,7 @@
 					"for old_name, new_name in colunas_renomeadas_orderItems.items():\r\n",
 					"    df_orderItems = df_orderItems.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 86
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -696,7 +696,7 @@
 				"source": [
 					"display(df_orderItems.limit(1))"
 				],
-				"execution_count": 87
+				"execution_count": 26
 			},
 			{
 				"cell_type": "markdown",
@@ -733,7 +733,7 @@
 					"\r\n",
 					"df_orderItems.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orderItems)"
 				],
-				"execution_count": 88
+				"execution_count": 27
 			},
 			{
 				"cell_type": "markdown",
@@ -765,7 +765,7 @@
 					"colunas_orders = df_orders.columns\r\n",
 					"print(colunas_orders)"
 				],
-				"execution_count": 77
+				"execution_count": 28
 			},
 			{
 				"cell_type": "code",
@@ -795,7 +795,7 @@
 					"for old_name, new_name in colunas_renomeadas_orders.items():\r\n",
 					"    df_orders = df_orders.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 78
+				"execution_count": 29
 			},
 			{
 				"cell_type": "code",
@@ -812,9 +812,9 @@
 					"collapsed": false
 				},
 				"source": [
-					"display(df_orderItems.limit(1))"
+					"display(df_orders.limit(1))"
 				],
-				"execution_count": 79
+				"execution_count": 31
 			},
 			{
 				"cell_type": "markdown",
@@ -851,7 +851,7 @@
 					"\r\n",
 					"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_orders)"
 				],
-				"execution_count": 80
+				"execution_count": 32
 			},
 			{
 				"cell_type": "markdown",
@@ -883,7 +883,7 @@
 					"colunas_departmentProducts = df_departmentProducts.columns\r\n",
 					"print(colunas_departmentProducts)"
 				],
-				"execution_count": 81
+				"execution_count": 33
 			},
 			{
 				"cell_type": "code",
@@ -915,7 +915,7 @@
 					"for old_name, new_name in colunas_renomeadas_departmentProducts.items():\r\n",
 					"    df_departmentProducts = df_departmentProducts.withColumnRenamed(old_name, new_name)"
 				],
-				"execution_count": 82
+				"execution_count": 34
 			},
 			{
 				"cell_type": "code",
@@ -934,7 +934,7 @@
 				"source": [
 					"display(df_departmentProducts.limit(1))"
 				],
-				"execution_count": 83
+				"execution_count": 35
 			},
 			{
 				"cell_type": "markdown",
@@ -971,7 +971,7 @@
 					"\r\n",
 					"df_departmentProducts.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(silver_departmentProducts)"
 				],
-				"execution_count": 84
+				"execution_count": 36
 			}
 		]
 	}
