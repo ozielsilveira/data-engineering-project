@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "aa9ee539-8922-4860-93fd-034dfd5d8394"
+				"spark.autotune.trackingId": "41ea05f1-cfea-4d52-ba60-683f2d05176b"
 			}
 		},
 		"metadata": {
@@ -185,7 +185,7 @@
 				},
 				"source": [
 					"%%sql\r\n",
-					"CREATE TABLE tabela_obt_oficial\r\n",
+					"CREATE TABLE IF NOT EXISTS tabela_obt_oficial\r\n",
 					"USING DELTA\r\n",
 					"LOCATION 'abfss://gold@datalakeengdados.dfs.core.windows.net/OBT'"
 				],
