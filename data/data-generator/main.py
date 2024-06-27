@@ -64,7 +64,7 @@ def createOrderItems(n, order_ids, department_product_data):
         item = {
             "itemId": str(fake.uuid4()),
             "orderId": random.choice(order_ids),
-            "productId": department_product["productId"],
+            "departmentProductId": department_product["departmentProductId"],
             "productName": "Product",  
             "quantity": random.randint(1, 10),
             "unitPrice": department_product["sellingPrice"], 
