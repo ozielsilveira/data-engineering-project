@@ -38,19 +38,19 @@ Na camada _gold_, os dados são refinados e otimizados para o consumo final por 
    - **Gold**: Refino e otimização final.
 4. **Visualização no Power BI**: Os dados refinados são carregados no Power BI para criação de dashboards e relatórios interativos.
 
+## Fluxo da Pipeline de dados
+
+![Pipeline](images/pipeline.png)
+
 ## Navegação
 
 - [MongoDB](mongodb.md)
-- [Azure Synapse](azure_synapse.md)
+- [Orquestração](azure_synapse.md)
 - [Landing](landing.md)
 - [Bronze](bronze.md)
 - [Silver](silver.md)
 - [Gold](gold.md)
 - [Power BI](power_bi.md)
-
-## Contato
-
-Para mais informações, entre em contato com nossa equipe através do e-mail: [email@example.com](mailto:email@example.com).
 
 ---
 

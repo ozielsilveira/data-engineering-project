@@ -1,4 +1,4 @@
-# Azure Synapse
+# Orquestração
 
 ## Descrição
 
@@ -17,10 +17,35 @@ O objetivo do Azure Synapse no projeto é fornecer uma plataforma robusta para p
 3. **Limpeza de Dados (Silver)**: Remoção de duplicatas, correção de erros e preenchimento de valores ausentes.
 4. **Refinamento de Dados (Gold)**: Criação de métricas e agregações para análise final.
 
-## Ferramentas Utilizadas
+## MongoDB no Synapse
 
-- **Azure Synapse Studio**: Ambiente para desenvolvimento e gestão de pipelines de dados.
-- **Apache Spark**: Para processamento de dados em grande escala.
-- **SQL**: Para consultas e transformações de dados.
+### Siga os passos a seguir
+
+#### 1 - Conexão com o Atlas MongoDB
+
+![New connection](images/new-connection.jpeg)
+
+#### 2 - Selecionar as collections
+
+![Source data](images/source-data.jpeg)
+
+#### 3 - Selecione o destino, que neste caso é o Data Lake. Em seguida, escolha o container "landing-zone" dentro do Data Lake e defina o formato final do arquivo como .parquet
+
+![Data set](images/data-set.jpeg)
+
+#### 4 - Selecionar formato do arquivo como "Parquet"
+
+![File Format](images/file-format.jpeg)
+
+#### 5 - Selecionar colunas das tabelas de origens e definir seus tipos de dados
+
+![Schema map](images/schema-map.jpeg)
+
+## Exemplo de fluxo
+
+![Pipeline de dados](images/flow-pipeline.png)
+
+Fluxo da pipeline de dados
+Primeiro, o loop "for each" percorre um array contendo todas as collections selecionadas, inserindo-as individualmente. Após a conclusão bem-sucedida dessa etapa, a pipeline continua e passa pelas camadas bronze, silver e gold.
 
 [Voltar para a página inicial](index.md)

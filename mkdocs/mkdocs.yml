@@ -2,7 +2,7 @@ site_name: PIPELINE DE DADOS - FATURAMENTO ANUAL
 nav:
   - Home: index.md
   - MongoDB: mongodb.md
-  - Azure Synapse: azure_synapse.md
+  - Orquestração: azure_synapse.md
   - Landing: landing.md
   - Bronze: bronze.md
   - Silver: silver.md
