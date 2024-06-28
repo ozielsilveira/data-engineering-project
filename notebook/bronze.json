@@ -18,16 +18,12 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "684457be-25b4-4197-84af-b0a333a6cb48"
+				"spark.autotune.trackingId": "4410b09f-94f7-4391-9ece-1ced685739b5"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
 			"enableDebugMode": false,
-			"kernelspec": {
-				"name": "synapse_pyspark",
-				"display_name": "Synapse PySpark"
-			},
 			"language_info": {
 				"name": "python"
 			},
@@ -38,13 +34,14 @@
 				"endpoint": "https://synapseengdados.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
 				"auth": {
 					"type": "AAD",
-					"authResource": "https://dev.azuresynapse.net"
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
 				},
 				"sparkVersion": "3.4",
 				"nodeCount": 10,
 				"cores": 4,
 				"memory": 28,
-				"automaticScaleJobs": false
+				"extraHeader": null
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -269,8 +266,7 @@
 					"df_customers = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/customers.parquet', format='parquet')\r\n",
 					"\r\n",
 					"df_customers.printSchema()"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -312,8 +308,7 @@
 					"df_customers.printSchema()\r\n",
 					"\r\n",
 					"df_customers.show(10)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -349,8 +344,7 @@
 					"bronze_customers = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/customers'\r\n",
 					"\r\n",
 					"df_customers.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_customers)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -399,8 +393,7 @@
 					"df_departments = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departments.parquet', format='parquet')\r\n",
 					"\r\n",
 					"df_departments.printSchema()"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -442,8 +435,7 @@
 					"df_departments.printSchema()\r\n",
 					"\r\n",
 					"df_departments.show(10)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -479,8 +471,7 @@
 					"bronze_departments = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/departments'\r\n",
 					"\r\n",
 					"df_departments.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_departments)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -530,8 +521,7 @@
 					"df_employees = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/employees.parquet', format='parquet')\r\n",
 					"\r\n",
 					"df_employees.printSchema()"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -573,8 +563,7 @@
 					"df_employees.printSchema()\r\n",
 					"\r\n",
 					"df_employees.show(10)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -610,8 +599,7 @@
 					"bronze_employees = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/employees'\r\n",
 					"\r\n",
 					"df_employees.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_employees)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -660,8 +648,7 @@
 					"df_orderItems = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/orderItems.parquet', format='parquet')\r\n",
 					"\r\n",
 					"df_orderItems.printSchema()"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -703,8 +690,7 @@
 					"df_orderItems.printSchema()\r\n",
 					"\r\n",
 					"df_orderItems.show(10)"
-				],
-				"execution_count": null
+				]
 			},
 			{
 				"cell_type": "markdown",
@@ -872,136 +858,6 @@
 					"df_orders.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_orders)"
 				],
 				"execution_count": 24
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## **DepartmentProducts**"
-				]
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"##### Gerando um dataframe."
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"df_departmentProducts = spark.read.load('abfss://landing-zone@datalakeengdados.dfs.core.windows.net/departmentProducts.parquet', format='parquet')\r\n",
-					"\r\n",
-					"df_departmentProducts.printSchema()"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"##### Adicionando metadados de data e hora de processamento e nome do arquivo de origem."
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"from pyspark.sql.functions import current_timestamp, lit\r\n",
-					"\r\n",
-					"df_departmentProducts = df_departmentProducts.withColumn(\"data_hora_bronze\", current_timestamp())\r\n",
-					"\r\n",
-					"df_departmentProducts = df_departmentProducts.withColumn(\"nome_arquivo\", lit(\"departmentProducts.parquet\"))\r\n",
-					"\r\n",
-					"df_departmentProducts.printSchema()\r\n",
-					"\r\n",
-					"df_departmentProducts.show(10)"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"##### Salvando na camada bronze com o formato delta"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"bronze_departmentProducts = 'abfss://bronze@datalakeengdados.dfs.core.windows.net/departmentProducts'\r\n",
-					"\r\n",
-					"df_departmentProducts.write.format(\"delta\").mode(\"overwrite\").option(\"overwriteSchema\", \"true\").save(bronze_departmentProducts)"
-				],
-				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
